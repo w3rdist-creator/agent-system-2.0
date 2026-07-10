@@ -4,7 +4,7 @@ Agent System 2.0 is an evidence-first distribution for **Hermes Agent**, not a p
 
 **New user? Start with the [Team Quickstart](TEAM-QUICKSTART.md)** — install to first working session in fifteen minutes, plus the honest list of known boundaries.
 
-The project is a bounded successor candidate to five earlier public repositories. It is justified by self-governance, selective loading, safe ownership, and measurable behavior—not by shipping more folders. The repository passed its own admission test in [the improvement proposal](examples/improvement-proposal--this-repository.md) and [loop contract](examples/loop-contract--this-repository.md).
+The project is a bounded successor candidate to five earlier public repositories. It is justified by self-governance, selective loading, safe ownership, and measurable behavior—not by shipping more folders. The repository passed its own admission tests in the [1.0 improvement proposal](examples/improvement-proposal--this-repository.md), [1.1 improvement proposal](examples/improvement-proposal--release-1.1.md), and [loop contract](examples/loop-contract--this-repository.md).
 
 ## Install quickstart
 
@@ -42,7 +42,9 @@ bash scripts/install-pack.sh research --vault "$HOME/Evidence-First-Vault"
 bash scripts/install-pack.sh agent-ops --vault "$HOME/Evidence-First-Vault"
 ```
 
-## What ships in 1.0
+## What ships
+
+The 1.0 foundation includes:
 
 - a posture-only `SOUL.md`, authority boundaries, and explicit loading model;
 - one unconditional capability router, one task-shape-loaded operating skill, and four trigger-loaded core skills;
@@ -54,15 +56,27 @@ bash scripts/install-pack.sh agent-ops --vault "$HOME/Evidence-First-Vault"
 - paired treatment/control evaluation harness, 16 scenarios, and deterministic trace assertions;
 - reference-first installer, verifier, pack tools, safe uninstaller, scanners, budget auditor, and Linux/macOS CI.
 
-The full Hermes platform layer, native Windows, backup/restore/upgrade automation, gateway and deployment recipes, MCP/plugin activation recipes, automated model grading, hosted UI, non-Hermes adapters, and corpus payloads are deferred. Context Spine ships only as an architecture and bounded-retrieval contract; Deep Timeline remains its deferred temporal subcorpus. See [the roadmap](docs/Deferred-Capability-Roadmap.md).
+Release 1.1 adds:
+
+- pre-tool-use enforcement hooks for protected paths, credential echo, and retrieval caps;
+- automated vault intake, exact-content deduplication, decay pressure, bounded resolve queues, and an honest metabolism ledger;
+- a one-command live recert smoke examiner with append-only provenance;
+- self-collected, idempotent telemetry from explicitly named machine artifacts;
+- a team vault contract for shared/personal boundaries, attribution, promotion, and `.incoming` merge proposals;
+- a consolidated seven-label runtime disposition vocabulary with compatibility aliases for historical evaluation records.
+
+## Known limits
+
+Machine-checkable rules are enforceable through the shipped hook, but only runners that wire and honor that hook receive enforcement; judgment-level doctrine remains advisory. Team use now has an explicit vault contract, but the release does not ship real-time sync, permissions enforcement, or CRDT merge tooling. The full Hermes platform layer, native Windows, backup/restore/upgrade automation, gateway and deployment integrations, MCP/plugin activation recipes, automated model grading, hosted UI, non-Hermes adapters, and corpus payloads remain deferred. Context Spine ships only as an architecture and bounded-retrieval contract; Deep Timeline remains its deferred temporal subcorpus. See [the roadmap](docs/Deferred-Capability-Roadmap.md).
 
 ## Evaluation status
 
-The harness, all 16 deterministic scenario schemas, and a shipped reference runner (`scripts/eval_adapter_codex.py`) pass validation, and paired model results are checked in under `evaluations/results/`. On the recorded pairing (gpt-5.5 via codex-cli 0.144.1, reasoning medium, 2026-07-10), the final run shows **10 of 16 scenarios with confirmed deltas** — treatment 3/3 with control failing at least 2/3 — meeting the 8-scenario publication threshold without an override. Earlier same-day runs (1/16, then 2/16, then 6/16) are retained: the gap was closed by doctrine sharpening and two instrument-faithfulness fixes, and the full progression is part of the record. These results are facts about that model/version/tool pairing and date, not universal proof; scenario secrecy expired at publication, so post-1.0 re-certification claims need held-out scenarios.
+The Release 1.1 paired 96-trial run used gpt-5.6-sol at high reasoning on 2026-07-10 and is checked in at `evaluations/results/run-2026-07-10-gpt-5.6-sol-1.1.csv`. It recorded **5 of 16 confirmed deltas**, below the fixed threshold of 8; the operator-directed release override is recorded in the CSV. Treatment passed all three trials on 8/16 scenarios. Scenarios 01 and 05 passed 3/3 in both arms on this model, so they do not demonstrate a treatment effect and are queued for redesign or removal under the methodology. One trial whose fixture was not mounted was re-administered. Scenario 12's write assertion was widened identically for both arms to accept the preservation-first `.incoming` proposal convention.
 
-## Release-candidate status
+The earlier gpt-5.5 medium 10/16 certificate certifies Release 1.0's former ten-label vocabulary only; it is not the 1.1 certificate. The live recert log contains a passing gpt-5.6-sol high treatment-arm smoke for scenario 15 at `evaluations/results/recert-log.csv`, but a one-trial recert row is not paired delta evidence. The full development gate is green. Every result remains specific to its named model, reasoning setting, runner, date, and vocabulary rather than universal proof.
 
-Mechanical development and sanitized-export gates may pass while human release gates remain open. Operator sanitization sign-off, split-license confirmation, paired-model review, a non-builder clean-room install, and publication approval are required before public release. Predecessors are not superseded until the additional 30-day/five-use conditions pass.
+## Release status
+
+Release 1.0 is published. Release 1.1.0 is the subsequent update described here; its below-threshold paired result is carried under the recorded operator-directed override, not represented as a threshold pass. Mechanical development and export gates do not push, tag, or supersede predecessors. Predecessors remain governed by the separate 30-day/five-use and operator-approval conditions.
 
 For design and operating boundaries, read [Architecture](docs/Architecture.md), [Admission and Exclusion](docs/Admission-and-Exclusion-Policy.md), [Token and Context Budget](docs/Token-and-Context-Budget.md), and [Sanitization and Publication](docs/Sanitization-and-Publication.md).
-

@@ -5,7 +5,11 @@ from pathlib import Path
 import re
 import unittest
 
-from scripts.evaluation_lib import DISPOSITIONS
+from scripts.evaluation_lib import (
+    DISPOSITIONS,
+    LEGACY_DISPOSITION_ALIASES,
+    normalize_disposition,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -19,15 +23,26 @@ class DispositionVocabularyTests(unittest.TestCase):
                 "act",
                 "watch",
                 "no-action",
-                "no-edge",
                 "blocked",
                 "done",
-                "merge",
-                "defer",
                 "kill",
                 "needs-human",
             },
         )
+
+    def test_legacy_aliases_normalize_to_canonical_labels(self):
+        self.assertEqual(
+            LEGACY_DISPOSITION_ALIASES,
+            {"merge": "done", "defer": "watch", "no-edge": "no-action"},
+        )
+        for legacy, canonical in LEGACY_DISPOSITION_ALIASES.items():
+            with self.subTest(legacy=legacy):
+                self.assertEqual(normalize_disposition(legacy), canonical)
+                self.assertIn(normalize_disposition(legacy), DISPOSITIONS)
+
+    def test_unknown_label_does_not_normalize_into_the_closed_set(self):
+        self.assertEqual(normalize_disposition("later"), "later")
+        self.assertNotIn(normalize_disposition("later"), DISPOSITIONS)
 
     def test_all_scenario_and_assertion_dispositions_use_shared_set(self):
         scenario_values = set()
@@ -39,6 +54,7 @@ class DispositionVocabularyTests(unittest.TestCase):
         self.assertTrue(scenario_values <= DISPOSITIONS)
         self.assertTrue(assertion_values <= DISPOSITIONS)
         self.assertEqual(scenario_values, assertion_values)
+        self.assertEqual(scenario_values, DISPOSITIONS)
 
     def test_methodology_prints_exact_shared_vocabulary(self):
         text = (ROOT / "evaluations" / "README.md").read_text(encoding="utf-8")

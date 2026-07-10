@@ -26,7 +26,7 @@ For each material source, record:
 
 ## Test evidence rather than count citations
 
-Assess independence, proximity to the event, measurement method, incentives, missing population, and contradictory evidence. Multiple pages repeating one upstream claim remain one evidentiary line. For analogies, require independent evidence in both domains, an explicit causal mechanism, a falsifiable implication, and a non-applicability boundary. Record `no-edge` when resemblance does not survive those checks.
+Assess independence, proximity to the event, measurement method, incentives, missing population, and contradictory evidence. Multiple pages repeating one upstream claim remain one evidentiary line. For analogies, require independent evidence in both domains, an explicit causal mechanism, a falsifiable implication, and a non-applicability boundary. Record `no-action` when resemblance does not survive those checks.
 
 When sources conflict, preserve both observations with dates and scope. Resolve whether the conflict comes from freshness, definitions, populations, methods, or genuine disagreement. Do not silently rewrite the older record.
 

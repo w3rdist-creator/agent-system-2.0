@@ -34,6 +34,7 @@ MANDATORY_LANDINGS = {
     "Dashboards": "Dashboards Map.md",
     "Archive": "Archive Map.md",
     "System": "System Rules.md",
+    "Queues": "Queues Map.md",
 }
 
 

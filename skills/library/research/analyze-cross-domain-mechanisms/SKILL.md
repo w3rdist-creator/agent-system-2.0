@@ -29,9 +29,9 @@ Creative or historical material may generate a useful hypothesis, but empirical 
 
 ## Produce only useful outputs
 
-Return the source handles, mechanism map, confidence, falsifier, non-applicability, and disposition. Create a durable bridge or pattern note only when it changes a project, experiment, question, or decision; otherwise leave a compact research lead or `no-edge` result.
+Return the source handles, mechanism map, confidence, falsifier, non-applicability, and disposition. Create a durable bridge or pattern note only when it changes a project, experiment, question, or decision; otherwise leave a compact research lead or `no-action` result.
 
 
 ## When no edge survives
 
-When the analysis finds no supported mechanism, advantage, or connection, the disposition is `no-edge` — the finding — not `kill`; `kill` is reserved for rejecting a governed proposal or mechanism that was formally under admission.
+When the analysis finds no supported mechanism, advantage, or connection, the disposition is `no-action` — the finding — not `kill`; `kill` is reserved for rejecting a governed proposal or mechanism that was formally under admission.

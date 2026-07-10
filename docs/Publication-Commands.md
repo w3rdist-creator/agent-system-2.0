@@ -120,3 +120,6 @@ done
 
 Verify all five public README pages after pushing. Archiving the predecessor repositories is a separate operator decision; README deprecation is mandatory under the supersession contract.
 
+## 5. Updates after first publication
+
+The one-commit publication gate remains correct for each fresh sanitized export, but the existing public clone gains commits after its first release. For the BUILD gate, fresh-export step, account substitution, `rsync` update, public commit and push, CI check, and tag sequence, follow [Update Gate](Update-Gate.md). Remote writes, public-clone commits, pushes, CI judgment, and tagging remain operator-only.

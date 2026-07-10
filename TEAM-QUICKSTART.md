@@ -4,10 +4,10 @@ This gets you from zero to a working agent-and-vault setup in about fifteen minu
 
 ## What you actually get
 
-- **An operating stance** (`agent/SOUL.md` + authority boundaries): a compact contract for how your agent decides, verifies, and reports — including a closed vocabulary of ten "disposition" labels every piece of work ends with (`act`, `done`, `blocked`, `needs-human`, ...). You'll see these constantly; there's a cheat sheet below.
+- **An operating stance** (`agent/SOUL.md` + authority boundaries): a compact contract for how your agent decides, verifies, and reports — including a closed vocabulary of seven "disposition" labels every piece of work ends with (`act`, `done`, `blocked`, `needs-human`, ...). You'll see these constantly; there's a cheat sheet below.
 - **A three-level skill router**: your agent loads one small index at startup, then only the category and skill it needs. This keeps context small and behavior auditable. Your own skills plug into the same system.
-- **A 16-folder vault**: an Obsidian-compatible knowledge base with a deliberate layout (Sources, Decisions, Queues, Raw, System, ...) and one worked example chain showing how a source becomes a decision becomes a revisable belief.
-- **Nine templates** for the recurring artifacts (source notes, decision packets, task/result packets, belief revisions, ...).
+- **A 17-folder vault**: an Obsidian-compatible knowledge base with a deliberate layout (Sources, Decisions, Queues, Raw, System, ...) and one worked example chain showing how a source becomes a decision becomes a revisable belief.
+- **Ten templates** for the recurring artifacts (source notes, decision packets, task/result packets, belief revisions, merge proposals, ...).
 - **Two optional packs** (Research and Agent Ops) with working example content, plus eight declared-but-empty packs that activate only if you ever need them.
 - **Lifecycle tools**: installer, verifier, uninstaller — all hash-verified, all reversible, none of them ever touch files you own.
 
@@ -48,7 +48,7 @@ If `verify-install.sh` fails, it tells you the exact missing step. Open the vaul
 1. **Read `Home.md` and `Vault Self-Model.md`** in the vault — five minutes; they explain what each folder is for and, importantly, what the vault refuses to become (a write-only note dump).
 2. **Follow the seed chain.** Start at `Sources/` and follow the links: a real source note → a decision packet → a review → a belief that got revised when new evidence arrived. This chain is the whole operating model in miniature. Everything you build follows this shape.
 3. **Run one real task through your agent.** Ask your Hermes agent to research something small and file it. Watch for two behaviors the doctrine installs: it should read its sources before concluding, and it should end with a disposition label and a short "decision surface" instead of a wall of text.
-4. **Process the result into the vault** using `templates/source-note.md` and, if it led to a choice, `templates/decision-packet.md`.
+4. **File the result through metabolism.** Have the agent write it only to `Inbox/` with a valid `route:` frontmatter destination, then run `python3 scripts/metabolism.py --vault "$HOME/Evidence-First-Vault"`. Use `templates/source-note.md` and, if it led to a choice, `templates/decision-packet.md` for the resulting durable artifacts.
 
 ## The disposition cheat sheet
 
@@ -62,10 +62,9 @@ Every unit of work ends with exactly one of these. They're how you scan agent ou
 | `needs-human` | a judgment or authority call is yours to make |
 | `no-action` | evidence says deliberately leave things unchanged |
 | `watch` | parked, with a named condition that reopens it |
-| `defer` | moved out of scope, with a governed return condition |
-| `merge` | duplicates were consolidated into one survivor |
 | `kill` | a proposal or mechanism was rejected or retired |
-| `no-edge` | investigated; no supported advantage or connection found |
+
+Deprecated aliases in old ledgers: `merge` means `done`, `defer` means `watch`, and `no-edge` means `no-action`.
 
 ## Building your own system on top
 
@@ -77,12 +76,16 @@ This is infrastructure — here's where your stuff goes:
 - **Your own packs:** `packs/manifest.yaml` shows the contract. A pack is just a folder of vault content plus a `PACK.md` declaring what it's for and when it should die. The eight inert packs are worked examples of *declaring* capability without shipping filler.
 - **Check your work:** `bash scripts/dev-gate.sh` runs the whole verification suite; individual verifiers under `scripts/` run standalone.
 
+### Working as a team
+
+Keep each member's installed vault personal and unsynced. Add one shared vault, installed once by a designated owner, and synchronize only that vault. Agents and members capture into its `Inbox/`; the owner's single scheduler runs metabolism to route captures into canon. Canon edits are human-only, and the vault owner governs `System/`. Promote personal notes by copying them with provenance, and copy shared notes back to personal vaults without moving them. The full write, merge, and attribution convention is in [Team Vault Contract](docs/Team-Vault-Contract.md).
+
 ## Known boundaries (read before you judge it)
 
-1. **Single-player.** One operator, one vault, one Hermes home. There is no shared-vault merge or team-sync story yet — coordinate across teammates manually.
-2. **Doctrine is advisory, not enforced.** The stance measurably changes behavior, but nothing at runtime *blocks* an agent that ignores it. Treat authority boundaries as strong defaults, not a security layer, and keep real credentials out of anything an agent reads.
+1. **Team sync is contract-only.** The [shared-vault contract](docs/Team-Vault-Contract.md) defines topology, write authority, attribution, promotion, and conflict handling. Real-time sync, permissions enforcement, and automatic merge remain deliberately manual until one external team requests tooling or two maintainer production uses cannot be served cleanly by the contract.
+2. **Enforcement requires runner wiring.** Machine-checkable protected-write, credential-echo, and retrieval-cap rules ship as a pre-tool-use hook with a documented runner contract. A runner that never calls the hook gets no enforcement; judgment-level doctrine and authority boundaries remain advisory rather than a security layer. Keep real credentials out of anything an agent reads.
 3. **No upgrade automation yet.** Install and uninstall are tested and safe; upgrading in place is not built. For now: uninstall (it preserves everything you modified), reinstall, re-add packs.
-4. **The eval certificate is narrow.** One model, one date, simulated tools, single-turn scenarios — all checked in under `evaluations/results/`. Re-run it against your own model with `scripts/eval_adapter_codex.py` if you want current numbers.
+4. **The eval certificate is narrow.** One model, one date, simulated tools, single-turn scenarios — all checked in under `evaluations/results/`. Run `scripts/recert.sh` for a current single-arm smoke result; it does not replace the paired three-trial/two-arm delta certificate.
 5. **Windows is untested.** POSIX path only (WSL2 inferred compatible, not CI-tested).
 6. **Empty registries are deliberate.** Four skill categories contain pointers instead of skills — that's declared deferred capability, not breakage.
 

@@ -143,24 +143,27 @@ def execute_suite(args: argparse.Namespace, suite: list[tuple[Path, dict[str, An
     if args.runner == "command" and not args.runner_command:
         print("ERROR: --runner command requires --runner-command.", file=sys.stderr)
         return 2
-    missing_provenance = [
-        flag
-        for flag, value in (
-            ("--model-id", args.model_id),
-            ("--model-version", args.model_version),
-            ("--model-version-date", args.model_version_date),
-        )
-        if not value
-    ]
-    if missing_provenance:
-        print(f"ERROR: run mode requires {', '.join(missing_provenance)}.", file=sys.stderr)
-        return 2
+    paired_run = args.scenario is None and args.arm == "both" and args.trials == TRIALS_PER_ARM
+    if paired_run:
+        missing_provenance = [
+            flag
+            for flag, value in (
+                ("--model-id", args.model_id),
+                ("--model-version", args.model_version),
+                ("--model-version-date", args.model_version_date),
+            )
+            if not value
+        ]
+        if missing_provenance:
+            print(f"ERROR: run mode requires {', '.join(missing_provenance)}.", file=sys.stderr)
+            return 2
 
     rows: list[dict[str, Any]] = []
     for scenario_dir, scenario, assertions in suite:
         arm_results: dict[str, list[dict[str, Any]]] = {"treatment": [], "control": []}
-        for arm in ("treatment", "control"):
-            for trial in range(1, TRIALS_PER_ARM + 1):
+        arms = ("treatment", "control") if args.arm == "both" else (args.arm,)
+        for arm in arms:
+            for trial in range(1, args.trials + 1):
                 try:
                     transcript = run_command_adapter(
                         args.runner_command,
@@ -177,6 +180,26 @@ def execute_suite(args: argparse.Namespace, suite: list[tuple[Path, dict[str, An
                 arm_results[arm].append(result)
                 status = "PASS" if result["passed"] else "FAIL"
                 print(f"{scenario['Scenario ID']} {arm} trial {trial}: {status}")
+
+                if not paired_run:
+                    # A stable, rubric-result line lets narrow smoke-test callers
+                    # record the outcome without parsing human-facing status text.
+                    print(
+                        "TRIAL_RESULT "
+                        + json.dumps(
+                            {
+                                "scenario": scenario["Scenario ID"],
+                                "arm": arm,
+                                "trial": trial,
+                                "passed": result["passed"],
+                                "failures": result["failures"],
+                            },
+                            sort_keys=True,
+                        )
+                    )
+
+        if not paired_run:
+            continue
 
         treatment_passes = sum(result["passed"] for result in arm_results["treatment"])
         control_passes = sum(result["passed"] for result in arm_results["control"])
@@ -207,6 +230,10 @@ def execute_suite(args: argparse.Namespace, suite: list[tuple[Path, dict[str, An
             }
         )
         rows.append(row)
+
+    if not paired_run:
+        print(f"Completed narrow run: {len(suite)} scenario(s), {args.arm}, {args.trials} trial(s) per arm")
+        return 0
 
     output = args.output
     if output is None:
@@ -247,6 +274,19 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model-id")
     parser.add_argument("--model-version")
     parser.add_argument("--model-version-date")
+    parser.add_argument("--scenario", choices=sorted(EXPECTED_SCENARIO_IDS))
+    parser.add_argument(
+        "--arm",
+        choices=("treatment", "control", "both"),
+        default="both",
+        help="arm subset (default: both)",
+    )
+    parser.add_argument(
+        "--trials",
+        type=int,
+        default=TRIALS_PER_ARM,
+        help=f"trials per selected arm (default: {TRIALS_PER_ARM})",
+    )
     parser.add_argument("--output", type=Path)
     parser.add_argument("--force", action="store_true", help="replace an existing --output file")
     return parser.parse_args()
@@ -254,6 +294,9 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
+    if args.trials < 1:
+        print("ERROR: --trials must be at least 1.", file=sys.stderr)
+        return 2
     suite, errors = validate_suite(args.evaluations)
     if errors:
         for error in errors:
@@ -264,6 +307,8 @@ def main() -> int:
     print(f"PASS: {deterministic} scenarios have deterministic observable-action assertions")
     if args.schema_only:
         return 0
+    if args.scenario is not None:
+        suite = [item for item in suite if item[1]["Scenario ID"] == args.scenario]
     return execute_suite(args, suite)
 
 

@@ -15,7 +15,7 @@ source_rows:
 - **Owner:** `w3rdist-creator`
 - **Review cadence:** weekly while any card is unresolved
 
-Each one-screen card records stable ID, first/last seen, owner, severity, evidence, minutes estimated, decision needed, `promote | test | merge | defer | demote | kill`, return condition, and state change. Adding reviewers or capacity is not a resolution.
+Each one-screen card records stable ID, first/last seen, owner, severity, evidence, minutes estimated, decision needed, `promote | test | done | watch | demote | kill`, return condition, and state change. `done` records a verified merge. Adding reviewers or capacity is not a resolution.
 
 ## Seed card — resolved
 

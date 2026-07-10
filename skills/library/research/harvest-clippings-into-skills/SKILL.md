@@ -17,8 +17,8 @@ Extract material claims, evidence quality, limits, reusable procedures, and curr
 - preserve as a source to read;
 - run a bounded experiment;
 - propose a reusable skill or runbook patch;
-- defer with a return condition;
-- merge with existing coverage; or
+- use `watch` with a return condition;
+- use `done` after a verified merge with existing coverage; or
 - kill/archive as low value or already absorbed.
 
 Write one bounded synthesis report for the sweep. Create a separate note only when an individual source merits durable retrieval.

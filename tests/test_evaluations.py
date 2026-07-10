@@ -9,10 +9,12 @@ import unittest
 
 from scripts.evaluation_lib import (
     HARNESS_VERSION,
+    LEGACY_DISPOSITION_ALIASES,
     RESULT_FIELDS,
     ValidationError,
     evaluate_transcript,
     load_json_yaml,
+    validate_assertion_spec,
     validate_result_row,
     validate_scenario_dir,
 )
@@ -36,6 +38,20 @@ class ScenarioSchemaTests(unittest.TestCase):
             (scenario / "scenario.yaml").write_text(json.dumps(data), encoding="utf-8")
             with self.assertRaisesRegex(ValidationError, "missing schema fields"):
                 validate_scenario_dir(scenario)
+
+    def test_legacy_scenario_disposition_is_accepted(self):
+        source_id = "03-seductive-cross-domain-analogy"
+        with tempfile.TemporaryDirectory() as temporary:
+            evaluations = Path(temporary) / "evaluations"
+            scenario = evaluations / "scenarios" / source_id
+            expected = evaluations / "expected"
+            shutil.copytree(ROOT / "evaluations" / "scenarios" / source_id, scenario)
+            expected.mkdir(parents=True)
+            shutil.copy2(ROOT / "evaluations" / "expected" / f"{source_id}.json", expected)
+            data = load_json_yaml(scenario / "scenario.yaml")
+            data["Disposition emitted"] = "no-edge"
+            (scenario / "scenario.yaml").write_text(json.dumps(data), encoding="utf-8")
+            validate_scenario_dir(scenario)
 
 
 class TraceAssertionTests(unittest.TestCase):
@@ -69,6 +85,86 @@ class TraceAssertionTests(unittest.TestCase):
         result = evaluate_transcript(transcript, self.spec)
         self.assertFalse(result["passed"])
         self.assertTrue(any("before answer" in failure or "ordered event" in failure for failure in result["failures"]))
+
+    def test_each_legacy_emission_matches_its_canonical_assertion(self):
+        for legacy, canonical in LEGACY_DISPOSITION_ALIASES.items():
+            with self.subTest(legacy=legacy):
+                spec = {**self.spec, "disposition": canonical}
+                transcript = {
+                    "events": [
+                        {
+                            "type": "tool_call",
+                            "tool": "read_file",
+                            "args": {"path": "fixture/live.json"},
+                        },
+                        {"type": "answer", "content": "complete"},
+                        {"type": "disposition", "label": legacy},
+                    ]
+                }
+                result = evaluate_transcript(transcript, spec)
+                self.assertTrue(result["passed"], result["failures"])
+                self.assertEqual(result["emitted_disposition"], canonical)
+
+    def test_legacy_assertion_matches_canonical_emission(self):
+        spec = {**self.spec, "disposition": "merge"}
+        transcript = {
+            "events": [
+                {
+                    "type": "tool_call",
+                    "tool": "read_file",
+                    "args": {"path": "fixture/live.json"},
+                },
+                {"type": "answer", "content": "complete"},
+                {"type": "disposition", "label": "done"},
+            ]
+        }
+        result = evaluate_transcript(transcript, spec)
+        self.assertTrue(result["passed"], result["failures"])
+
+    def test_merge_transcript_passes_checked_in_done_expectation(self):
+        spec = load_json_yaml(
+            ROOT / "evaluations" / "expected" / "15-write-only-vault.json"
+        )
+        transcript = {
+            "events": [
+                {
+                    "type": "tool_call",
+                    "tool": "read_file",
+                    "args": {"path": f"fixture/{name}"},
+                }
+                for name in ("inventory.json", "usage.json", "index-a.md", "index-b.md")
+            ]
+            + [
+                {
+                    "type": "tool_call",
+                    "tool": "delete_file",
+                    "args": {"path": "fixture/index-b.md"},
+                },
+                {"type": "answer", "content": "duplicate removed and verified"},
+                {"type": "disposition", "label": "merge"},
+            ]
+        }
+        result = evaluate_transcript(transcript, spec)
+        self.assertTrue(result["passed"], result["failures"])
+        self.assertEqual(result["emitted_disposition"], "done")
+
+    def test_unknown_assertion_and_emission_still_fail(self):
+        with self.assertRaisesRegex(ValidationError, "invalid assertion disposition"):
+            validate_assertion_spec({**self.spec, "disposition": "later"})
+        transcript = {
+            "events": [
+                {
+                    "type": "tool_call",
+                    "tool": "read_file",
+                    "args": {"path": "fixture/live.json"},
+                },
+                {"type": "answer", "content": "complete"},
+                {"type": "disposition", "label": "later"},
+            ]
+        }
+        result = evaluate_transcript(transcript, self.spec)
+        self.assertFalse(result["passed"])
+        self.assertTrue(any("invalid emitted disposition" in failure for failure in result["failures"]))
 
 
 class ResultsSchemaTests(unittest.TestCase):

@@ -5,9 +5,9 @@ type: operating-rule
 
 # Decision and Parked-State Rule
 
-Every investigation ends with `act | watch | no-action | no-edge | blocked | done | merge | defer | kill | needs-human` and a next-state consequence.
+Every investigation ends with `act | watch | no-action | blocked | done | kill | needs-human` and a next-state consequence.
 
-Every `watch`, `no-action`, or `defer` decision must record:
+Every `watch` or `no-action` decision must record:
 
 - state-change condition;
 - review or decay date;

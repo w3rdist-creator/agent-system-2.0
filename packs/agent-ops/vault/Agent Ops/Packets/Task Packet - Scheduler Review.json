@@ -28,7 +28,7 @@
     "out_of_scope": ["Live infrastructure and machine-specific configuration"]
   },
   "deliverables": ["Single-scheduler rule", "Loop-scoreboard verdict", "Two-layer report"],
-  "acceptance_checks": ["One owner per outcome", "Closed keep/tune/pause/merge/kill verdict", "No private topology claims"],
+  "acceptance_checks": ["One owner per outcome", "Closed keep/tune/pause/done/kill verdict with completed merges noted", "No private topology claims"],
   "dependencies": ["Pinned public source ledger"],
   "risks": ["A generic safeguard may be mistaken for evidence that a private incident occurred; label it as a design review"],
   "due_or_review_at": "2026-07-10",

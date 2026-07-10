@@ -49,6 +49,20 @@ class TemplateContractTests(unittest.TestCase):
             path.write_text(broken, encoding="utf-8")
             self.assertIn("empty field: Decision delta", markdown_instance_errors(path, schema))
 
+    def test_merge_proposal_requires_attribution(self):
+        schema = MARKDOWN_SCHEMAS["merge-proposal"]
+        text = (ROOT / "examples" / "merge-proposal" / "example.md").read_text(
+            encoding="utf-8"
+        )
+        broken = text.replace("author: alex\n", "")
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "example.md"
+            path.write_text(broken, encoding="utf-8")
+            self.assertIn(
+                "missing frontmatter field: author",
+                markdown_instance_errors(path, schema),
+            )
+
     def test_packet_json_round_trips(self):
         for packet_type in ("task-packet", "result-packet"):
             path = ROOT / "examples" / packet_type / "example.json"

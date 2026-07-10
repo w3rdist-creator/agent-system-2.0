@@ -19,7 +19,7 @@ Prefer the smallest destination that can carry the outcome: chat for ephemeral w
 
 ## Exclusion and rejection
 
-Reject, externalize, or defer an addition when it has no named consumer, duplicates an owned surface, lacks redistribution rights, turns private material into public seed content, has no bounded retrieval/maintenance case, exceeds the active context or review budget, treats measurement as action authority, or requires unsupported ownership of upstream state.
+Reject, externalize, or assign `watch` with a return condition to an addition when it has no named consumer, duplicates an owned surface, lacks redistribution rights, turns private material into public seed content, has no bounded retrieval/maintenance case, exceeds the active context or review budget, treats measurement as action authority, or requires unsupported ownership of upstream state.
 
 Plausible filler is not a substitute for source-derived seed content. Personal preferences do not become universal doctrine. Drift-prone recipes remain upstream pointers until real demand and compatibility evidence justify local ownership.
 
@@ -27,7 +27,7 @@ A rejection record states the evidence checked, the reason, the chosen dispositi
 
 ## Parked-state discipline
 
-`watch`, `no-action`, and `defer` are decisions. Each must record:
+`watch` and `no-action` are decisions. Each must record:
 
 - the state-change or return condition;
 - a review or decay date;
@@ -41,7 +41,7 @@ At decay, renew explicitly with new evidence, demote, merge, or kill. An item do
 Operational outcomes use:
 
 ```text
-act | watch | no-action | no-edge | blocked | done | merge | defer | kill | needs-human
+act | watch | no-action | blocked | done | kill | needs-human
 ```
 
 Source-file consolidation uses:
@@ -51,4 +51,3 @@ copy | adapt | merge | supersede | external-pointer | reject
 ```
 
 Labels do not replace evidence; they state the next governed state after the evidence is recorded.
-

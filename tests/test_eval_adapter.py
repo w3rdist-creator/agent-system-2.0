@@ -36,6 +36,10 @@ class AdapterFunctionTests(unittest.TestCase):
         args = schema["properties"]["args"]
         self.assertFalse(args["additionalProperties"])
         self.assertEqual(set(args["required"]), set(args["properties"]))
+        self.assertEqual(
+            set(schema["properties"]["disposition"]["enum"]) - {None},
+            {"act", "watch", "no-action", "blocked", "done", "kill", "needs-human"},
+        )
 
     def test_extract_json_handles_fences_and_nesting(self):
         extract = self.adapter.extract_json

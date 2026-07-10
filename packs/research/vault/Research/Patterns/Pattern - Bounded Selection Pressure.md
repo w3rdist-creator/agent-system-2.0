@@ -40,7 +40,7 @@ Neither input is creative evidence, but both are design prescriptions rather tha
 
 ## Constructive counterweight
 
-Unfiltered generation can support exploration and preserve weak early signals. The constructive alternative is not zero generation: retain immutable Raw evidence, allow bounded speculative candidates, and use dated defer conditions so slow-burn value is not discarded merely because it lacks immediate use.
+Unfiltered generation can support exploration and preserve weak early signals. The constructive alternative is not zero generation: retain immutable Raw evidence, allow bounded speculative candidates, and use dated `watch` return conditions so slow-burn value is not discarded merely because it lacks immediate use.
 
 ## Non-applicability
 

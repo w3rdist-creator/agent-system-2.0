@@ -5,7 +5,7 @@ type: domain-map
 
 # Agent Ops Map
 
-Begin with [[Resolve Queue]] and [[Health Usefulness Governance Scorecard]]. Delegation crosses [[Verification Gate]] through the task and result packets. Recurring execution obeys [[Single Scheduler Ownership]].
+Begin with [[agent-ops/vault/Agent Ops/Queues/Resolve Queue|Resolve Queue]] and [[Health Usefulness Governance Scorecard]]. Delegation crosses [[Verification Gate]] through the task and result packets. Recurring execution obeys [[Single Scheduler Ownership]].
 
 The worked seed ends in [[Two-Layer Report - Scheduler Review]] and [[Review - Single Scheduler Seed]].
 

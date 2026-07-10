@@ -39,7 +39,7 @@
       "status": "inert",
       "owner": "w3rdist-creator if activated",
       "activation_trigger": "One external user request or two production uses not cleanly served by shipped surfaces, plus separate liability and freshness review.",
-      "kill_condition": "Keep inert or retire on stale authority, absent research-only boundaries, no-edge suppression, or unbounded liability."
+      "kill_condition": "Keep inert or retire on stale authority, absent research-only boundaries, suppression of no-action findings, or unbounded liability."
     },
     "product-os": {
       "status": "inert",

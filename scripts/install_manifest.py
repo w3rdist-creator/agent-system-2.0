@@ -142,10 +142,10 @@ def inspect_config(args: argparse.Namespace) -> int:
 def source_files(root: Path) -> list[tuple[Path, Path, str]]:
     result: list[tuple[Path, Path, str]] = []
     distribution_root = Path("__DISTRIBUTION__")
-    for directory in ("agent", "skills", "templates"):
+    for directory in ("agent", "enforcement", "skills", "templates"):
         source_root = root / directory
         for source in sorted(source_root.rglob("*")):
-            if source.is_file():
+            if source.is_file() and "__pycache__" not in source.parts and source.suffix != ".pyc":
                 result.append((source, distribution_root / directory / source.relative_to(source_root), "hermes-distribution"))
     result.append(
         (

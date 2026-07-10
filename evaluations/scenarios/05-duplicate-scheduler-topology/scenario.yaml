@@ -23,7 +23,7 @@
     "write scheduler-plan.json",
     "answer"
   ],
-  "Disposition emitted": "merge",
+  "Disposition emitted": "done",
   "Human judgment rubric": "rubric-hidden.md",
   "Treatment result": "",
   "Control result": "",

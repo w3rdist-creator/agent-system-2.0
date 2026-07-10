@@ -44,7 +44,7 @@ replacement-rationale: Replaces unbounded clipping notes; merge only when all fi
 
 ## Disposition
 
-<!-- apply | watch | no-action | no-edge | merge | defer | reject | needs-human -->
+<!-- apply | watch | no-action | done | reject | needs-human -->
 
 ## Provenance links
 

@@ -46,5 +46,4 @@ If those gates do not pass, this repository remains an experiment and does not r
 
 ## Disposition
 
-`act`: continue the bounded successor experiment. `defer`: all predecessor deprecation until every supersession condition is positively satisfied.
-
+`act`: continue the bounded successor experiment. `watch`: park all predecessor deprecation until every supersession condition is positively satisfied.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministically validate all nine Release 1.0 templates and their examples."""
+"""Deterministically validate all governed templates and their examples."""
 
 from __future__ import annotations
 
@@ -14,8 +14,8 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 DISPOSITIONS = {
-    "act", "watch", "no-action", "no-edge", "blocked", "done", "merge",
-    "defer", "kill", "needs-human", "apply", "reject", "supported",
+    "act", "watch", "no-action", "blocked", "done", "kill", "needs-human",
+    "apply", "reject", "supported",
 }
 HEADING = re.compile(r"^##\s+(.+?)\s*$", re.MULTILINE)
 COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)
@@ -27,6 +27,7 @@ METADATA = re.compile(r"<!--\s*(.*?)\s*-->", re.DOTALL)
 class MarkdownSchema:
     filename: str
     headings: tuple[str, ...]
+    frontmatter_fields: tuple[str, ...] = ()
 
 
 MARKDOWN_SCHEMAS = {
@@ -90,6 +91,14 @@ MARKDOWN_SCHEMAS = {
             "Next action and acceptance", "Rollback or recovery",
         ),
     ),
+    "merge-proposal": MarkdownSchema(
+        "merge-proposal.md",
+        (
+            "What conflicts", "Source A", "Source B", "Proposed survivor",
+            "Evidence", "Disposition",
+        ),
+        ("author", "proposal-date"),
+    ),
 }
 
 JSON_REQUIRED: dict[str, dict[str, type]] = {
@@ -133,6 +142,10 @@ def markdown_template_errors(path: Path, name: str, schema: MarkdownSchema) -> l
     frontmatter = FRONTMATTER.match(text)
     if not frontmatter or "license: CC BY 4.0" not in frontmatter.group(1):
         errors.append("missing CC BY 4.0 frontmatter")
+    frontmatter_text = frontmatter.group(1) if frontmatter else ""
+    for field in schema.frontmatter_fields:
+        if not re.search(rf"(?m)^\s*{re.escape(field)}:\s*\S.+$", frontmatter_text):
+            errors.append(f"missing frontmatter field: {field}")
     metadata_match = METADATA.search(text, frontmatter.end() if frontmatter else 0)
     metadata = metadata_match.group(1) if metadata_match else ""
     for label in ("template", "consumer", "owner", "replacement-rationale"):
@@ -148,8 +161,14 @@ def markdown_template_errors(path: Path, name: str, schema: MarkdownSchema) -> l
 
 
 def markdown_instance_errors(path: Path, schema: MarkdownSchema) -> list[str]:
-    parsed = sections(path.read_text(encoding="utf-8"))
+    text = path.read_text(encoding="utf-8")
+    parsed = sections(text)
     errors: list[str] = []
+    frontmatter = FRONTMATTER.match(text)
+    frontmatter_text = frontmatter.group(1) if frontmatter else ""
+    for field in schema.frontmatter_fields:
+        if not re.search(rf"(?m)^\s*{re.escape(field)}:\s*\S.+$", frontmatter_text):
+            errors.append(f"missing frontmatter field: {field}")
     for heading in schema.headings:
         if heading not in parsed:
             errors.append(f"missing field: {heading}")

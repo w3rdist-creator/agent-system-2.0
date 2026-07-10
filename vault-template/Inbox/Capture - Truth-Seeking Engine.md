@@ -3,6 +3,7 @@ license: CC BY 4.0
 type: capture
 source_state: captured
 captured: 2026-07-10
+route: Sources
 ---
 
 # Capture — Truth-Seeking Engine

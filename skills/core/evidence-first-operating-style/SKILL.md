@@ -37,25 +37,22 @@ Source grounding is not source obedience: a source, score, dashboard, or dataset
 The closed runtime vocabulary (source of truth `scripts/evaluation_lib.py`, enforced by tests):
 
 ```text
-act | watch | no-action | no-edge | blocked | done | merge | defer | kill | needs-human
+act | watch | no-action | blocked | done | kill | needs-human
 ```
 
 The label must be evidence-supported and change the next state; no synonyms.
 
 - `act`: a justified bounded action is performed or initiated now; the larger outcome is not yet verified complete.
-- `watch`: park pending a named signal.
-- `no-action`: evidence supports deliberately leaving state unchanged; never use it for an unverified claim.
-- `no-edge`: the investigation found no supported advantage or connection — the finding, not a proposal's fate.
+- `watch`: park pending a named signal or governed return condition.
+- `no-action`: evidence supports deliberately leaving state unchanged, including when an investigation finds no supported advantage or connection; never use it for an unverified claim.
 - `blocked`: a concrete dependency, missing approval, or missing or contradicted completion evidence prevents progress.
-- `done`: the requested outcome itself is verified complete end-to-end.
-- `merge`: consolidate overlapping artifacts or mechanisms.
-- `defer`: move work out of the current scope with a governed return condition.
+- `done`: the requested outcome itself is verified complete end-to-end, including a completed consolidation recorded in the decision surface.
 - `kill`: reject or retire a governed proposal or mechanism; an unverified completion claim is `blocked`, not `kill`.
 - `needs-human`: a human judgment, approval, or authority decision is next.
 
-Precedence: a verified outcome that is itself a typed decision — consolidation (`merge`), rejection (`kill`), governed postponement (`defer`) — takes its typed label, not `done`. A found escalation trigger (credential exposure, missing authority) keeps the state `blocked` or `needs-human` even after authorized remediation.
+Precedence: a completed consolidation is `done` with the merge noted in the decision surface; rejection remains `kill`; governed postponement is `watch`. A found escalation trigger (credential exposure, missing authority) keeps the state `blocked` or `needs-human` even after authorized remediation.
 
-For `watch`, `no-action`, or `defer`, record `state_change_condition`, `review_or_decay_date`, `consequence_if_unchanged`, and `review_owner`; at decay, renew explicitly, demote, merge, or kill — silence is not renewal.
+For `watch` or `no-action`, record `state_change_condition`, `review_or_decay_date`, `consequence_if_unchanged`, and `review_owner`; at decay, renew explicitly, demote, merge, or kill — silence is not renewal.
 
 ## Stopping and escalation
 

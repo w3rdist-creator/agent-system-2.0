@@ -75,6 +75,7 @@ duplicate=$(printf '%s\n' "$inspection" | sed -n '2p')
 
 printf 'COMPATIBLE: %s\n' "$version_output"
 printf 'STRATEGY: reference-first via skills.external_dirs[%s]\n' "$external_index"
+printf 'ADVISORY: pre-tool-use enforcement wiring is runner-specific; see docs/Enforcement.md. This installer never edits config.yaml.\n'
 
 if [ "$dry_run" = true ]; then
     printf 'DRY RUN: no files or Hermes configuration will be written\n'

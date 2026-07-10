@@ -23,7 +23,7 @@ Use links for real navigation, hierarchy, provenance, disagreement, or semantic 
 5. Keep derived sidecars rebuildable and separate from source truth.
 6. Do not create automation, remotes, or schedules unless explicitly authorized.
 
-For inbox processing, assign a disposition to every touched item: route to an owning artifact, preserve as source work, merge, defer with a return condition, archive, or reject. To consolidate duplicate artifacts: read every copy, write the surviving artifact with the merged content, delete the redundant copy, and emit `merge`. A write-only vault with growing unread notes should be reduced or pruned before more organization is added.
+For inbox processing, assign a disposition to every touched item: route to an owning artifact, preserve as source work, use `done` after a verified merge, use `watch` for a deferral with a return condition, archive, or reject. To consolidate duplicate artifacts: read every copy, write the surviving artifact with the merged content, delete the redundant copy, and emit `done` with the merge noted in the decision surface. A write-only vault with growing unread notes should be reduced or pruned before more organization is added.
 
 ## Verify and report
 

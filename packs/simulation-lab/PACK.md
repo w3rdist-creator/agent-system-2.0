@@ -6,7 +6,7 @@ license: CC BY 4.0
 
 - **Purpose:** sandbox hypotheses, replays, and candidate simulations without promoting speculative output into factual or operational authority
 - **Source paths and pinned commits:** `second-brain-super-repo:packs/simulation-lab/` at `755e4a2018983317079999b4a975a81c8b4bddf4`
-- **Known useful mechanisms:** hypothesis wind tunnel, replay review, candidate-resolution ledger, failure review, and promote/merge/kill queue
+- **Known useful mechanisms:** hypothesis wind tunnel, replay review, candidate-resolution ledger, failure review, and promote/done/kill queue, with completed merges noted
 - **Missing consumer evidence:** ordinary Knowledge and Experiments already support bounded speculation; no user has proved the need for a separate lifecycle surface
 - **Activation trigger:** implement when one external user requests it or the maintainer records two production uses not cleanly served by Research, Agent Ops, the base vault, or routed skills
 - **Owner if activated:** `w3rdist-creator`

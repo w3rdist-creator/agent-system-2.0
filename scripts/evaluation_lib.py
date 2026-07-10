@@ -9,7 +9,7 @@ import re
 from typing import Any, Iterable, Mapping
 
 
-HARNESS_VERSION = "1.0.0"
+HARNESS_VERSION = "1.1.0"
 
 # This is the single source of truth for emitted decision dispositions.
 DISPOSITIONS = frozenset(
@@ -17,15 +17,25 @@ DISPOSITIONS = frozenset(
         "act",
         "watch",
         "no-action",
-        "no-edge",
         "blocked",
         "done",
-        "merge",
-        "defer",
         "kill",
         "needs-human",
     }
 )
+
+LEGACY_DISPOSITION_ALIASES = {
+    "merge": "done",
+    "defer": "watch",
+    "no-edge": "no-action",
+}
+
+
+def normalize_disposition(value: Any) -> Any:
+    """Return the canonical label for a disposition, preserving unknown values."""
+
+    return LEGACY_DISPOSITION_ALIASES.get(value, value)
+
 
 SCENARIO_FIELDS = (
     "Scenario ID",
@@ -127,7 +137,7 @@ def validate_scenario_dir(scenario_dir: Path) -> tuple[dict[str, Any], dict[str,
         errors.append(
             f"Scenario ID {scenario_id!r} must equal directory name {scenario_dir.name!r}"
         )
-    disposition = scenario.get("Disposition emitted")
+    disposition = normalize_disposition(scenario.get("Disposition emitted"))
     if disposition not in DISPOSITIONS:
         errors.append(f"invalid disposition {disposition!r}")
     if scenario.get("Human judgment rubric") != "rubric-hidden.md":
@@ -192,7 +202,8 @@ def validate_assertion_spec(spec: Any, scenario_id: str | None = None) -> None:
     ):
         if not isinstance(spec.get(field), list):
             raise ValidationError(f"{field} must be a list")
-    if spec.get("disposition") not in DISPOSITIONS:
+    disposition = normalize_disposition(spec.get("disposition"))
+    if disposition not in DISPOSITIONS:
         raise ValidationError(f"invalid assertion disposition {spec.get('disposition')!r}")
     for field in ("required_events", "forbidden_events", "event_order"):
         if not all(isinstance(item, dict) and item for item in spec[field]):
@@ -227,6 +238,22 @@ def normalize_transcript(transcript: Any) -> list[dict[str, Any]]:
             raise ValidationError(f"transcript event {index} must be an object with string type")
         normalized.append(event)
     return normalized
+
+
+def fixture_reads_before_first_answer(events: list[dict[str, Any]]) -> list[str]:
+    """Return fixture paths read before the transcript's first answer event."""
+
+    reads: list[str] = []
+    for event in events:
+        if event.get("type") == "answer":
+            break
+        if event.get("type") != "tool_call" or event.get("tool") != "read_file":
+            continue
+        args = event.get("args")
+        path = args.get("path") if isinstance(args, dict) else None
+        if isinstance(path, str) and (path == "fixture" or path.startswith("fixture/")):
+            reads.append(path)
+    return reads
 
 
 def _matches(value: Any, expected: Any) -> bool:
@@ -296,11 +323,15 @@ def evaluate_transcript(transcript: Any, spec: Mapping[str, Any]) -> dict[str, A
             failures.append(f"required file read before answer not found: {path}")
 
     disposition_events = [event for event in events if event.get("type") == "disposition"]
-    emitted = disposition_events[-1].get("label") if disposition_events else None
+    emitted = normalize_disposition(
+        disposition_events[-1].get("label") if disposition_events else None
+    )
     if emitted not in DISPOSITIONS:
         failures.append(f"missing or invalid emitted disposition: {emitted!r}")
-    elif emitted != spec["disposition"]:
-        failures.append(f"expected disposition {spec['disposition']!r}, got {emitted!r}")
+    else:
+        expected = normalize_disposition(spec["disposition"])
+        if emitted != expected:
+            failures.append(f"expected disposition {expected!r}, got {emitted!r}")
 
     return {
         "passed": not failures,

@@ -29,4 +29,4 @@ Thematic exposure is not thesis materiality. Separate direct economic exposure f
 
 ## Report uncertainty
 
-Label verified facts, estimates, and unknowns. Show missing data and sensitivity rather than hiding it in a point estimate. End with a research disposition such as watch, no-action, no-edge, defer, or needs-human, plus the next evidence that could change it.
+Label verified facts, estimates, and unknowns. Show missing data and sensitivity rather than hiding it in a point estimate. End with a research disposition such as watch, no-action, or needs-human, plus the next evidence that could change it.

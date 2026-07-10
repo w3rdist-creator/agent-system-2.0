@@ -36,7 +36,7 @@ replacement-rationale: Replaces conclusion-only notes; merge only if evidence, a
 
 ## Decision and disposition
 
-<!-- act | watch | no-action | no-edge | blocked | done | merge | defer | kill | needs-human -->
+<!-- act | watch | no-action | blocked | done | kill | needs-human -->
 
 ## Decision delta
 
@@ -48,4 +48,4 @@ replacement-rationale: Replaces conclusion-only notes; merge only if evidence, a
 
 ## Parked-state fields
 
-<!-- For watch, no-action, or defer: state-change condition; review or decay date; consequence if unchanged; owner of next review. Otherwise write not-applicable and why. -->
+<!-- For watch or no-action: state-change condition; review or decay date; consequence if unchanged; owner of next review. Otherwise write not-applicable and why. -->

@@ -20,4 +20,4 @@ At resolution, append the outcome, compare it with the forecast as originally st
 
 ## Return a research disposition
 
-Show source quality, mechanism, missing data, falsifier, review date, and supported next state. `watch`, `no-action`, `no-edge`, `defer`, or `needs-human` are legitimate outcomes; absence of a thesis is better than forced conviction.
+Show source quality, mechanism, missing data, falsifier, review date, and supported next state. `watch`, `no-action`, or `needs-human` are legitimate outcomes; absence of a thesis is better than forced conviction.

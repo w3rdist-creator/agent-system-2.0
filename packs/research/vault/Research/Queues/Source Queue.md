@@ -16,4 +16,4 @@ Queue only sources with a named question and exit route. Search this queue, Sour
 | RQ-2026-07-10-01 | CSV 68 | What prevents source capture from becoming unused accumulation? | Phase 5 executor | synthesized | `Raw/Research/Source Snapshot - Source to Synthesis.md` | merged into seed pattern |
 | RQ-2026-07-10-02 | CSV 279 | What makes a recurring loop earn continued operation? | Phase 5 executor | synthesized | `Raw/Research/Source Snapshot - Loop Scoreboard.md` | merged into seed pattern |
 
-Allowed states: `queued | captured | preserved | read | synthesized | applied | superseded | rejected`. A row exits by application, merge, explicit defer with return condition, non-connection, or rejection; it does not remain open merely because a snapshot exists.
+Allowed states: `queued | captured | preserved | read | synthesized | applied | superseded | rejected`. A row exits by application, completed consolidation, explicit watch with a return condition, non-connection, or rejection; it does not remain open merely because a snapshot exists.

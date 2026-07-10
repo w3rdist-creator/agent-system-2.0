@@ -25,3 +25,11 @@ One row represents one scenario's paired run. Fields are ordered as follows:
 | `operator_override_rationale` | Required by publication policy when an override is used. |
 
 The authoritative field list and validator are `RESULT_FIELDS` and `validate_result_row` in `scripts/evaluation_lib.py`. Result claims must retain the provenance fields when copied elsewhere.
+
+Rows recorded before Release 1.1 use the former ten-label disposition vocabulary. The evaluation library accepts `merge`, `defer`, and `no-edge` in those rows and transcripts as deprecated aliases for `done`, `watch`, and `no-action`, respectively.
+
+## Recert log
+
+`scripts/recert.sh` appends one row per attempted treatment-arm trial to `recert-log.csv`. Its ordered fields are `date`, `scenario`, `model`, `reasoning`, `arm`, `result`, and `failure_reason`. `result` is exactly `pass`, `fail`, or `error`: `fail` means the returned transcript failed one or more deterministic assertions, while `error` means the runner or harness did not produce an evaluable trial. The failure detail is empty only for a pass.
+
+A recert row is a dated, single-arm smoke result for the named model, reasoning effort, and scenario. It is not a paired treatment/control delta and must not be presented as the paired three-trial certificate described above.

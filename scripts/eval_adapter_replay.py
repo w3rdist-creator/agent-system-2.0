@@ -12,6 +12,42 @@ import os
 import pathlib
 import sys
 
+REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from enforcement.guards import evaluate as evaluate_guard
+from enforcement.guards import load_policy as load_guard_policy
+
+
+def enforce_events(events: list[dict], request: dict) -> list[dict]:
+    """Apply the opt-in guard to replayed model tool calls before stubbing them."""
+
+    policy = load_guard_policy(REPO_ROOT / "enforcement" / "policy.yaml")
+    context = {
+        "hermes_home": os.environ.get("HERMES_HOME", str(pathlib.Path.home() / ".hermes")),
+        "vault": str(request.get("fixture_dir", pathlib.Path.cwd())),
+    }
+    guarded = []
+    for event in events:
+        if event.get("type") != "tool_call":
+            guarded.append(event)
+            continue
+        result = evaluate_guard(
+            {"tool": event.get("tool"), "args": event.get("args", {})}, policy, context
+        )
+        if result["decision"] == "deny":
+            guarded.append(
+                {
+                    "type": "guard_denied",
+                    "tool": event.get("tool"),
+                    "rule": result["rule"],
+                }
+            )
+        else:
+            guarded.append(event)
+    return guarded
+
 
 def main() -> int:
     dump_root = os.environ.get("EVAL_TRANSCRIPT_DIR")
@@ -25,7 +61,10 @@ def main() -> int:
         print(f"missing precomputed transcript: {name}", file=sys.stderr)
         return 1
     data = json.loads(path.read_text(encoding="utf-8"))
-    json.dump({"events": data["events"]}, sys.stdout, ensure_ascii=False)
+    events = data["events"]
+    if os.environ.get("EVAL_ENFORCE") == "1":
+        events = enforce_events(events, req)
+    json.dump({"events": events}, sys.stdout, ensure_ascii=False)
     return 0
 
 

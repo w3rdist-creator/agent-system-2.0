@@ -31,6 +31,13 @@ import sys
 import tempfile
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from enforcement.guards import evaluate as evaluate_guard
+from enforcement.guards import load_policy as load_guard_policy
+
 REPLY_SCHEMA = r"""{
   "type": "object",
   "properties": {
@@ -62,7 +69,7 @@ REPLY_SCHEMA = r"""{
     "answer": { "type": ["string", "null"] },
     "disposition": {
       "type": ["string", "null"],
-      "enum": ["act", "watch", "no-action", "no-edge", "blocked", "done", "merge", "defer", "kill", "needs-human", null]
+      "enum": ["act", "watch", "no-action", "blocked", "done", "kill", "needs-human", null]
     }
   },
   "required": ["tool", "args", "answer", "disposition"],
@@ -75,6 +82,10 @@ MAX_TURNS = 15
 CODEX_RETRIES = 3
 CODEX_TIMEOUT = 420
 MAX_FILE_CHARS = 24000
+ENFORCE = os.environ.get("EVAL_ENFORCE") == "1"
+GUARD_POLICY = (
+    load_guard_policy(REPO_ROOT / "enforcement" / "policy.yaml") if ENFORCE else None
+)
 
 TOOLS = """Available tools (call at most one per turn):
 - read_file(path): return the text content of a workspace file.
@@ -112,7 +123,7 @@ To finish with your final answer:
   {"tool": null, "args": null, "answer": "<your answer text>", "disposition": "<label>"}
 
 The disposition label must be exactly one of:
-  act | watch | no-action | no-edge | blocked | done | merge | defer | kill | needs-human"""
+  act | watch | no-action | blocked | done | kill | needs-human"""
 
 
 def log(msg: str) -> None:
@@ -401,7 +412,29 @@ def run_trial(loading_text: str, fixture_listing: str, task: str, fixture_dir: P
                 if forced_final:
                     log(f"{trial_tag}: model kept calling tools past the cap; ending without answer")
                     break
-                event, result = execute_tool(str(obj["tool"]), obj.get("args") or {}, world)
+                tool = str(obj["tool"])
+                raw_args = obj.get("args") or {}
+                guard_args = (
+                    {key: value for key, value in raw_args.items() if value is not None}
+                    if isinstance(raw_args, dict)
+                    else raw_args
+                )
+                if ENFORCE:
+                    guard = evaluate_guard(
+                        {"tool": tool, "args": guard_args},
+                        GUARD_POLICY,
+                        {
+                            "hermes_home": os.environ.get("HERMES_HOME", str(Path.home() / ".hermes")),
+                            "vault": str(fixture_dir),
+                        },
+                    )
+                    if guard["decision"] == "deny":
+                        rule = str(guard["rule"])
+                        events.append({"type": "guard_denied", "tool": tool, "rule": rule})
+                        result = {"error": f"tool call denied by pre-tool-use guard: {rule}"}
+                        history.append({"tool": tool, "args": {}, "result": result})
+                        continue
+                event, result = execute_tool(tool, raw_args, world)
                 events.append(event)
                 history.append({"tool": event["tool"], "args": event["args"], "result": result})
                 continue

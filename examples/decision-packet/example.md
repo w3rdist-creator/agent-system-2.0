@@ -38,4 +38,4 @@ The wikilink verifier must find every mandatory landing page and resolve the see
 
 ## Parked-state fields
 
-not-applicable — this is an active implementation decision, not watch, no-action, or defer.
+not-applicable — this is an active implementation decision, not watch or no-action.

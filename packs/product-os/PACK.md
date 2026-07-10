@@ -4,7 +4,7 @@ license: CC BY 4.0
 
 # Product OS Pack Declaration
 
-- **Purpose:** connect discovery evidence, opportunity review, product theses, build decisions, and kill/merge/promote outcomes
+- **Purpose:** connect discovery evidence, opportunity review, product theses, build decisions, and kill/done/promote outcomes, with completed merges noted
 - **Source paths and pinned commits:** `second-brain-super-repo:packs/product-os/` at `755e4a2018983317079999b4a975a81c8b4bddf4`
 - **Known useful mechanisms:** customer-discovery index, evidence ledger, opportunity ledger, product thesis, decision records, and bounded promotion review
 - **Missing consumer evidence:** no external user has shown that base Projects, Decisions, templates, and task packets cannot serve the workflow

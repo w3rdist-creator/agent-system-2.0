@@ -52,4 +52,4 @@ replacement-rationale: Replaces ad hoc feature requests; merge only into a succe
 
 ## Disposition
 
-<!-- End with a decision such as act, defer, reject, merge, or needs-human. -->
+<!-- End with a decision such as act, watch, reject, done, or needs-human; note any completed merge in the decision surface. -->

@@ -22,8 +22,12 @@ Every scenario directory contains:
 Machine assertions live separately in `evaluations/expected/<scenario-id>.json`. They can require or forbid partially matched events, require an event subsequence, require named fixture reads before the first answer, and require one emitted disposition from the closed set:
 
 ```text
-act | watch | no-action | no-edge | blocked | done | merge | defer | kill | needs-human
+act | watch | no-action | blocked | done | kill | needs-human
 ```
+
+Release 1.1 consolidated the former ten-label vocabulary: `merge` is now `done`, `defer` is now `watch`, and `no-edge` is now `no-action`. Transcript ingestion and assertion comparison normalize those deprecated aliases before validation, so pre-1.1 artifacts remain interpretable while model-facing prompts use only the canonical seven.
+
+The vocabulary changed in 1.1; the gpt-5.5 2026-07-10 runs certify the 1.0 vocabulary, and a 1.1 paired re-run is required before doctrine-contribution claims.
 
 The canonical transcript envelope is JSON:
 

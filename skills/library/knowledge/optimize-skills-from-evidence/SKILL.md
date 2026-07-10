@@ -20,4 +20,4 @@ Record the observed problem, evidence handles, target section, minimal patch, ex
 
 Run structural validation and a representative task or fixture. For complex behavior, use an independent forward test that receives the skill and task but not the suspected defect or intended answer. Compare against the prior version when practical and inspect for regressions outside the target behavior.
 
-Accept only evidence-backed, reusable changes whose maintenance cost is smaller than the failure prevented. Otherwise reject, defer, or merge the candidate and record why plus what evidence would reopen it.
+Accept only evidence-backed, reusable changes whose maintenance cost is smaller than the failure prevented. Otherwise reject, mark the candidate `watch` with a return condition, or mark a verified merge `done`; record why and what evidence would reopen it.

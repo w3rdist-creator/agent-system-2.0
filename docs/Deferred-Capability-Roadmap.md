@@ -2,6 +2,18 @@
 
 Deferred means named and trigger-gated, not silently discarded. External-user requests satisfy demand triggers; operator use can satisfy the stated two-production-use path but does not count as external demand.
 
+## Released from deferral in 1.1
+
+These operator-directed additions were admitted on 2026-07-10 and shipped in Release 1.1. They are recorded here so activation history is not mistaken for untriggered scope growth.
+
+| Capability | 1.1 status | Activation trigger recorded | Remaining boundary |
+|---|---|---|---|
+| Pre-tool-use enforcement hooks | Shipped | Operator direction, 2026-07-10 | Runner wiring is required; the hook is not a sandbox. |
+| Vault intake and metabolism | Shipped | Operator direction, 2026-07-10 | The distribution supplies the command and recipe, not a scheduler. |
+| Live recert examiner | Shipped | Operator direction, 2026-07-10 | Single-arm smoke evidence does not certify a paired delta. |
+| Self-collected telemetry | Shipped | Operator direction, 2026-07-10 | Only named machine artifacts are read; rows do not authorize action. |
+| Team vault contract | Contract shipped | Operator direction, 2026-07-10 | Sync, permissions, CRDT merge, and other team tooling remain deferred. |
+
 | Capability | Earliest release | Activation trigger | Blocking question |
 |---|---:|---|---|
 | Full Hermes config/profile/toolset layer | 1.1 | One external clean-room user succeeds | Can all touched capabilities remain namespaced without owning upstream files? |
@@ -12,11 +24,12 @@ Deferred means named and trigger-gated, not silently discarded. External-user re
 | Product OS | 1.1 | Default demand trigger | Is there a named consumer and changed product decision? |
 | Learning OS | 1.1 | Default trigger plus maintenance review | Can it avoid universal learning doctrine and stale curricula? |
 | Personal OS | 1.1+ | Explicit external request or two production uses plus privacy/universal-doctrine review | Can user-owned personal context stay private and non-prescriptive? |
-| Markets research-only | 1.1+ | Explicit demand plus liability/freshness review | Can research-only/no-edge boundaries remain enforceable? |
+| Markets research-only | 1.1+ | Explicit demand plus liability/freshness review | Can research-only/no-action boundaries remain enforceable? |
 | Native Windows | 1.1+ | One real Windows user or contributor | Is a second installer/CI surface maintainable? |
 | Gateway/messaging/voice/mobile | 1.1+ | One user needs it | Are upstream pointers better than version-stale recipes? |
 | MCP/plugin activation recipes | 1.1+ | Verified integration demand | Can version, secret, and authority boundaries be tested? |
-| Cron/watchdog/control tower | 1.1+ | Repeated scheduling need | Is there one scheduler owner, positive heartbeat, and usefulness evidence? |
+| Cron/watchdog/control tower | 1.1+ | Repeated scheduling need beyond the shipped operator recipes | Still deferred: 1.1 documents cron recipes for metabolism and recert but installs no scheduler. Is there one scheduler owner, positive heartbeat, and usefulness evidence? |
+| Team vault sync/permissions/merge tooling | 1.2+ | One external team request or two maintainer production uses not served by the 1.1 contract | Can tooling enforce the contract without owning user content or inventing a second merge authority? |
 | Backup/restore/upgrade tooling | After 1.0 exists | First real upgrade need | Can manifest migration avoid owning upstream or user state? |
 | VPS/local-LLM/hybrid/satellite | 1.1+ | Real deployment request | Is the topology available for repeatable tests? |
 | Hosted UI | Separate project | Explicit product decision | Why should it enter the core distribution? |
@@ -41,4 +54,3 @@ Every activated pack needs a source-derived seed, operator sanitization review, 
 Release 1.0 ships no Context Spine or Deep Timeline payload. The inspected 76 public non-market artifacts required source upgrading, as-of/freshness work, market-boundary adjudication, and claim-level review; that was adaptation-heavy, so Contract only was mandatory. The full 242-file private timeline, additional critic cards, market corpus, corpus automation, and three corpus-specific model scenarios all defer.
 
 A future corpus release must use separate namespaces for immutable distribution payload and user annotations, a manifest with content hashes and public source coordinates, a small index, numeric retrieval bounds, caution/freshness fields, and preservation-first uninstall. It may not turn an index or hash into claim authority.
-

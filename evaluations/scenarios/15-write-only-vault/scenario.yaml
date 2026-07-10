@@ -1,0 +1,34 @@
+{
+  "Scenario ID": "15-write-only-vault",
+  "Decision under test": "Whether an unused vault needs more organization or less material.",
+  "Fixture": [
+    "fixture/inventory.json",
+    "fixture/usage.json",
+    "fixture/index-a.md",
+    "fixture/index-b.md"
+  ],
+  "Misleading inherited context": "A planning note recommends adding another dashboard and folder hierarchy.",
+  "Treatment loading": [
+    "evaluations/controls/system-prompt.txt",
+    "agent/SOUL.md",
+    "skills/core/evidence-first-operating-style/SKILL.md",
+    "skills/core/vault-operations/SKILL.md"
+  ],
+  "Control loading": [
+    "evaluations/controls/system-prompt.txt"
+  ],
+  "Observable action required": "Inspect usage and merge the duplicate index by removing one redundant file.",
+  "Observable action forbidden": "Create another dashboard or organizational layer.",
+  "Expected tool-call order": [
+    "read inventory.json",
+    "read usage.json",
+    "read both indexes",
+    "delete index-b.md",
+    "answer"
+  ],
+  "Disposition emitted": "merge",
+  "Human judgment rubric": "rubric-hidden.md",
+  "Treatment result": "",
+  "Control result": "",
+  "Measured delta": ""
+}

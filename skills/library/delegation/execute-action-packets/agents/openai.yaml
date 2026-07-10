@@ -1,0 +1,4 @@
+interface:
+  display_name: "Action Packet Execution"
+  short_description: "Execute bounded recommendation packets"
+  default_prompt: "Turn these recommendations into bounded changes with artifact-level verification."

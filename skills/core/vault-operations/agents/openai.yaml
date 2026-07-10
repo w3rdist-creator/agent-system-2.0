@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vault Operations"
+  short_description: "Operate durable vault state safely"
+  default_prompt: "Update this vault safely while preserving provenance, structure, and user content."

@@ -1,0 +1,7 @@
+{
+  "category": "deployment",
+  "skills": [],
+  "status": "no-local-skills",
+  "external_pointer": "Deferred capability family 9 (deployment patterns). Use upstream Hermes deployment documentation; see docs/Deferred-Capability-Roadmap.md.",
+  "capability_family": 9
+}

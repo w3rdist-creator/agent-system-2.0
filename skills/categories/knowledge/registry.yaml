@@ -1,0 +1,4 @@
+{"category":"knowledge","skills":[
+  {"name":"knowledge-metabolism","description":"Convert captures and contradictory evidence into durable, revisable knowledge without promoting raw material prematurely. Use for belief revision, synthesis, canon promotion or demotion, memory routing, and source-to-skill extraction.","path":"skills/core/knowledge-metabolism/SKILL.md"},
+  {"name":"optimize-skills-from-evidence","description":"Improve an existing skill or runbook through recurring run evidence, a localized candidate patch, duplicate and safety checks, validation, and a durable rejection record. Use after repeated failures, useful source harvests, or stale behavior.","path":"skills/library/knowledge/optimize-skills-from-evidence/SKILL.md"}
+]}

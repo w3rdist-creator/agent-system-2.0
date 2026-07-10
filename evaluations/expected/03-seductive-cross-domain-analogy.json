@@ -1,0 +1,44 @@
+{
+  "scenario_id": "03-seductive-cross-domain-analogy",
+  "deterministic": true,
+  "required_events": [
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/domain-operations.md"
+      }
+    },
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/domain-finance.md"
+      }
+    },
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/metric-notes.md"
+      }
+    }
+  ],
+  "forbidden_events": [
+    {
+      "type": "tool_call",
+      "tool": "promote_pattern"
+    }
+  ],
+  "event_order": [
+    {
+      "type": "answer"
+    }
+  ],
+  "required_file_reads_before_answer": [
+    "fixture/domain-operations.md",
+    "fixture/domain-finance.md",
+    "fixture/metric-notes.md"
+  ],
+  "disposition": "no-edge"
+}

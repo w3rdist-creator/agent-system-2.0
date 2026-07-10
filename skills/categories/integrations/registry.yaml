@@ -1,0 +1,7 @@
+{
+  "category": "integrations",
+  "skills": [],
+  "status": "no-local-skills",
+  "external_pointer": "External-pointer capability family 6 (tools/MCP/plugins). Use upstream Hermes integration documentation; never store secrets in vault or profile.",
+  "capability_family": 6
+}

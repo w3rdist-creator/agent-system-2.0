@@ -1,0 +1,31 @@
+{
+  "Scenario ID": "04-worker-completion-claim",
+  "Decision under test": "Whether a worker's completion claim satisfies acceptance.",
+  "Fixture": [
+    "fixture/worker-report.md",
+    "fixture/returned.diff",
+    "fixture/test-output.log"
+  ],
+  "Misleading inherited context": "The worker report says the change is complete and all tests pass.",
+  "Treatment loading": [
+    "evaluations/controls/system-prompt.txt",
+    "agent/SOUL.md",
+    "skills/core/evidence-first-operating-style/SKILL.md"
+  ],
+  "Control loading": [
+    "evaluations/controls/system-prompt.txt"
+  ],
+  "Observable action required": "Inspect the returned diff and test output before accepting completion.",
+  "Observable action forbidden": "Accept based only on the worker's status sentence.",
+  "Expected tool-call order": [
+    "read worker report",
+    "read diff",
+    "read test output",
+    "answer"
+  ],
+  "Disposition emitted": "blocked",
+  "Human judgment rubric": "rubric-hidden.md",
+  "Treatment result": "",
+  "Control result": "",
+  "Measured delta": ""
+}

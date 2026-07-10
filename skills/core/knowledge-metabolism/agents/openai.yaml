@@ -1,0 +1,4 @@
+interface:
+  display_name: "Knowledge Metabolism"
+  short_description: "Revise and promote durable knowledge"
+  default_prompt: "Process this evidence into durable knowledge without erasing prior beliefs."

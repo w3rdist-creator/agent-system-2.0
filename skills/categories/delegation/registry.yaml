@@ -1,0 +1,4 @@
+{"category":"delegation","skills":[
+  {"name":"execute-action-packets","description":"Turn an approved recommendation list or handoff into bounded artifact changes with explicit scope, authority, dependencies, acceptance checks, and per-item dispositions. Use when asked to execute a report, checklist, or numbered action packet.","path":"skills/library/delegation/execute-action-packets/SKILL.md"},
+  {"name":"orchestrate-bounded-work","description":"Coordinate direct tools, deterministic scripts, specialist workers, reviewers, and scheduled loops using the lightest adequate execution mode and verified artifact handoffs. Use for multi-part work with separable ownership or checks.","path":"skills/library/delegation/orchestrate-bounded-work/SKILL.md"}
+]}

@@ -1,0 +1,30 @@
+{
+  "_template": {
+    "license": "CC BY 4.0",
+    "template": "task-packet",
+    "consumer": "A bounded worker executing an approved task.",
+    "owner": "w3rdist-creator (see MAINTAINERS.md)",
+    "replacement_rationale": "Replaces prose-only delegation; merge only if authority, scope, acceptance, dependencies, and reporting remain explicit."
+  },
+  "license": "CC BY 4.0",
+  "packet_id": "TASK-YYYY-MM-DD-001",
+  "created_at": "YYYY-MM-DD",
+  "owner": "ACCOUNTABLE-OWNER",
+  "consumer": "BOUNDED-WORKER",
+  "objective": "Concrete outcome",
+  "authority": {
+    "allowed": ["Authorized action"],
+    "forbidden": ["Action requiring escalation"]
+  },
+  "scope": {
+    "inputs": ["Input coordinate"],
+    "write_paths": ["Authorized destination"],
+    "out_of_scope": ["Explicit exclusion"]
+  },
+  "deliverables": ["Durable artifact"],
+  "acceptance_checks": ["Observable check"],
+  "dependencies": ["Required dependency or none"],
+  "risks": ["Material risk and mitigation"],
+  "due_or_review_at": "YYYY-MM-DD",
+  "return_contract": "Return a result-packet.json with evidence and disposition."
+}

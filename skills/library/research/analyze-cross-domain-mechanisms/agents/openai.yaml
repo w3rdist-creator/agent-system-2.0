@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cross-Domain Mechanisms"
+  short_description: "Test mechanisms across domains"
+  default_prompt: "Analyze this cross-domain pattern and test whether the mechanism transfers."

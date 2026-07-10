@@ -1,0 +1,18 @@
+{
+  "core_total": 2993,
+  "files": {
+    "agent/SOUL.md": 328,
+    "skills/core/capability-router/SKILL.md": 926,
+    "skills/core/evidence-first-operating-style/SKILL.md": 1345,
+    "skills/level-0-categories.yaml": 394
+  },
+  "hard_ceilings": {
+    "core_total": 3000,
+    "level_zero": 400
+  },
+  "method": "ceil(len(text)/4) Unicode characters per approximate token",
+  "regression_tolerance": {
+    "minimum_tokens": 20,
+    "relative": 0.05
+  }
+}

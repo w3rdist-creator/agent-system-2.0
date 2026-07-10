@@ -1,0 +1,38 @@
+#!/bin/sh
+set -eu
+
+if [ "${1:-}" = "--version" ]; then
+    printf '%s\n' "${FAKE_HERMES_VERSION:-Hermes Agent v0.18.2 (fixture)}"
+    exit 0
+fi
+
+# Faithful to real Hermes v0.18.x `config set` semantics: numeric list
+# indices assign IN PLACE only. An index equal to the list length (an
+# attempted append) raises, exactly like hermes_cli/config.py `_set_nested`
+# doing `current[int(last)] = value`. The 2026-07-10 clean-room install
+# proved the previous permissive append here masked a real-Hermes failure.
+if [ "${1:-}" = "config" ] && [ "${2:-}" = "set" ] && [ "$#" -eq 4 ]; then
+    case "$3" in
+        skills.external_dirs.*) index=${3##*.} ;;
+        *) printf 'unsupported fixture key: %s\n' "$3" >&2; exit 2 ;;
+    esac
+    config=${HERMES_HOME:?}/config.yaml
+    python3 - "$config" "$index" "$4" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+index = int(sys.argv[2])
+value = sys.argv[3]
+lines = path.read_text(encoding="utf-8").splitlines()
+positions = [i for i, line in enumerate(lines) if line.startswith("    - ")]
+if index >= len(positions):
+    raise IndexError("list assignment index out of range")
+lines[positions[index]] = f"    - {value}"
+path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+PY
+    exit 0
+fi
+
+printf 'unsupported fake Hermes invocation\n' >&2
+exit 2

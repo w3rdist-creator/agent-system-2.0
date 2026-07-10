@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bounded Agent Labs"
+  short_description: "Run controlled agent experiments"
+  default_prompt: "Design and run this agent experiment with fixed surfaces, budget, and evaluator."

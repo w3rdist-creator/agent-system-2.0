@@ -1,0 +1,54 @@
+{
+  "scenario_id": "14-fluent-report-without-decision",
+  "deterministic": true,
+  "required_events": [
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/report.md"
+      }
+    },
+    {
+      "type": "answer",
+      "content": {
+        "$regex": "state.change|trigger"
+      }
+    },
+    {
+      "type": "answer",
+      "content": {
+        "$regex": "decay|review date"
+      }
+    },
+    {
+      "type": "answer",
+      "content": {
+        "$regex": "owner"
+      }
+    },
+    {
+      "type": "answer",
+      "content": {
+        "$regex": "consequence|if nothing"
+      }
+    }
+  ],
+  "forbidden_events": [],
+  "event_order": [
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/report.md"
+      }
+    },
+    {
+      "type": "answer"
+    }
+  ],
+  "required_file_reads_before_answer": [
+    "fixture/report.md"
+  ],
+  "disposition": "watch"
+}

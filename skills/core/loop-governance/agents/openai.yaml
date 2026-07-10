@@ -1,0 +1,4 @@
+interface:
+  display_name: "Loop Governance"
+  short_description: "Govern recurring work and queues"
+  default_prompt: "Review this recurring loop, its queue budget, ownership, and keep-or-kill decision."

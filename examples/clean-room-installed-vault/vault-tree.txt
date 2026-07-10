@@ -1,0 +1,63 @@
+/private/tmp/efhd-clean-room-2/vault/.evidence-first/install-manifest.json
+/private/tmp/efhd-clean-room-2/vault/Agent Ops/Agent Ops Map.md
+/private/tmp/efhd-clean-room-2/vault/Agent Ops/Ledgers/Loop Scoreboard.csv
+/private/tmp/efhd-clean-room-2/vault/Agent Ops/Ledgers/Operator Correction Ledger.csv
+/private/tmp/efhd-clean-room-2/vault/Agent Ops/Ledgers/Prediction Calibration Ledger.csv
+/private/tmp/efhd-clean-room-2/vault/Agent Ops/Packets/Result Packet - Scheduler Review.json
+/private/tmp/efhd-clean-room-2/vault/Agent Ops/Packets/Task Packet - Scheduler Review.json
+/private/tmp/efhd-clean-room-2/vault/Agent Ops/Queues/Resolve Queue.md
+/private/tmp/efhd-clean-room-2/vault/Agent Ops/Reports/Two-Layer Report - Scheduler Review.md
+/private/tmp/efhd-clean-room-2/vault/Agent Ops/Reviews/Failure Review Template.md
+/private/tmp/efhd-clean-room-2/vault/Agent Ops/Reviews/Review - Single Scheduler Seed.md
+/private/tmp/efhd-clean-room-2/vault/Agent Ops/System/Health Usefulness Governance Scorecard.md
+/private/tmp/efhd-clean-room-2/vault/Agent Ops/System/Operator Correction Rule.md
+/private/tmp/efhd-clean-room-2/vault/Agent Ops/System/Single Scheduler Ownership.md
+/private/tmp/efhd-clean-room-2/vault/Agent Ops/System/Verification Gate.md
+/private/tmp/efhd-clean-room-2/vault/Archive/Archive Map.md
+/private/tmp/efhd-clean-room-2/vault/Areas/Areas Map.md
+/private/tmp/efhd-clean-room-2/vault/Clippings/Clippings Map.md
+/private/tmp/efhd-clean-room-2/vault/Daily/Daily Map.md
+/private/tmp/efhd-clean-room-2/vault/Dashboards/Dashboards Map.md
+/private/tmp/efhd-clean-room-2/vault/Decisions/Decision - One Real Chain Not Broad Seeding.md
+/private/tmp/efhd-clean-room-2/vault/Decisions/Decisions Map.md
+/private/tmp/efhd-clean-room-2/vault/Experiments/Experiments Map.md
+/private/tmp/efhd-clean-room-2/vault/Home.md
+/private/tmp/efhd-clean-room-2/vault/Inbox/Capture - Truth-Seeking Engine.md
+/private/tmp/efhd-clean-room-2/vault/Inbox/Inbox Map.md
+/private/tmp/efhd-clean-room-2/vault/Knowledge/Belief Revision - Useful Maps Beat Filler.md
+/private/tmp/efhd-clean-room-2/vault/Knowledge/Claim - Judgment Needs a Visible Revision Trail.md
+/private/tmp/efhd-clean-room-2/vault/Knowledge/Knowledge Map.md
+/private/tmp/efhd-clean-room-2/vault/Knowledge/Mechanism - Append Before Canon.md
+/private/tmp/efhd-clean-room-2/vault/Ledgers/Ledgers Map.md
+/private/tmp/efhd-clean-room-2/vault/Projects/Project - Phase 4 Base Vault.md
+/private/tmp/efhd-clean-room-2/vault/Projects/Projects Map.md
+/private/tmp/efhd-clean-room-2/vault/Raw/Raw Map.md
+/private/tmp/efhd-clean-room-2/vault/Raw/Research/Source Snapshot - Loop Scoreboard.md
+/private/tmp/efhd-clean-room-2/vault/Raw/Research/Source Snapshot - Source to Synthesis.md
+/private/tmp/efhd-clean-room-2/vault/Raw/Truth-Seeking Engine Snapshot.md
+/private/tmp/efhd-clean-room-2/vault/Reports/Reports Map.md
+/private/tmp/efhd-clean-room-2/vault/Research/Ledgers/Citation Use Log.csv
+/private/tmp/efhd-clean-room-2/vault/Research/Ledgers/Claim Evidence Ledger.csv
+/private/tmp/efhd-clean-room-2/vault/Research/Methods/Strategic Interaction and Goodhart Check.md
+/private/tmp/efhd-clean-room-2/vault/Research/Patterns/Pattern - Bounded Selection Pressure.md
+/private/tmp/efhd-clean-room-2/vault/Research/Patterns/Pattern Note Template.md
+/private/tmp/efhd-clean-room-2/vault/Research/Queues/Source Queue.md
+/private/tmp/efhd-clean-room-2/vault/Research/Research Map.md
+/private/tmp/efhd-clean-room-2/vault/Research/Reviews/Constructive Counterweight Template.md
+/private/tmp/efhd-clean-room-2/vault/Research/Reviews/Review - Bounded Selection Pressure.md
+/private/tmp/efhd-clean-room-2/vault/Research/Sources/Source Note - Loop Scoreboard.md
+/private/tmp/efhd-clean-room-2/vault/Research/Sources/Source Note - Source to Synthesis.md
+/private/tmp/efhd-clean-room-2/vault/Research/System/Citation Use and Demotion Rule.md
+/private/tmp/efhd-clean-room-2/vault/Research/System/Creative-to-Empirical Firewall.md
+/private/tmp/efhd-clean-room-2/vault/Research/System/Search Merge and Non-Connection Rule.md
+/private/tmp/efhd-clean-room-2/vault/Reviews/Review - Phase 4 Seed Scope.md
+/private/tmp/efhd-clean-room-2/vault/Reviews/Reviews Map.md
+/private/tmp/efhd-clean-room-2/vault/Sources/Source Note - Truth-Seeking Engine.md
+/private/tmp/efhd-clean-room-2/vault/Sources/Sources Map.md
+/private/tmp/efhd-clean-room-2/vault/System/Belief Revision Rule.md
+/private/tmp/efhd-clean-room-2/vault/System/Decision and Parked-State Rule.md
+/private/tmp/efhd-clean-room-2/vault/System/Measurement Authority Rule.md
+/private/tmp/efhd-clean-room-2/vault/System/Operating States and Promotion.md
+/private/tmp/efhd-clean-room-2/vault/System/Resolve Queue Rule.md
+/private/tmp/efhd-clean-room-2/vault/System/System Rules.md
+/private/tmp/efhd-clean-room-2/vault/Vault Self-Model.md

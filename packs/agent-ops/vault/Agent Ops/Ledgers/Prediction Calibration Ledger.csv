@@ -1,0 +1,2 @@
+license,prediction_id,created_at,domain,claim,base_rate,confidence,falsifier,resolver,resolution_source_of_record,due_at,resolved_at,outcome,brier_or_score,rule_update
+CC BY 4.0,PRED-EXAMPLE,YYYY-MM-DD,domain-neutral,"Observable claim",base-rate-or-unknown,0.50,"Observation that resolves false",ACCOUNTABLE-RESOLVER,"Stable source of record",YYYY-MM-DD,,pending,,"Update after resolution; never backfill confidence"

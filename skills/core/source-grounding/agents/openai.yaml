@@ -1,0 +1,4 @@
+interface:
+  display_name: "Source Grounding"
+  short_description: "Ground claims in bounded sources"
+  default_prompt: "Ground this claim in current sources and state the evidence limits."

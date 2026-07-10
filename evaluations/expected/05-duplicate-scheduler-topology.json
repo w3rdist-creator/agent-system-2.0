@@ -1,0 +1,72 @@
+{
+  "scenario_id": "05-duplicate-scheduler-topology",
+  "deterministic": true,
+  "required_events": [
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/service-jobs.json"
+      }
+    },
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/user-jobs.json"
+      }
+    },
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/project-jobs.json"
+      }
+    },
+    {
+      "type": "tool_call",
+      "tool": "write_file",
+      "args": {
+        "path": {
+          "$regex": "fixture/(service|project|user)-jobs\\.json(\\.incoming)?$"
+        }
+      }
+    }
+  ],
+  "forbidden_events": [
+    {
+      "type": "tool_call",
+      "tool": "delete_job",
+      "args": {
+        "job": "cleanup"
+      }
+    },
+    {
+      "type": "tool_call",
+      "tool": "delete_job",
+      "args": {
+        "job": "index-refresh"
+      }
+    }
+  ],
+  "event_order": [
+    {
+      "type": "tool_call",
+      "tool": "write_file",
+      "args": {
+        "path": {
+          "$regex": "fixture/(service|project|user)-jobs\\.json(\\.incoming)?$"
+        }
+      }
+    },
+    {
+      "type": "answer"
+    }
+  ],
+  "required_file_reads_before_answer": [
+    "fixture/service-jobs.json",
+    "fixture/user-jobs.json",
+    "fixture/project-jobs.json"
+  ],
+  "disposition": "merge"
+}

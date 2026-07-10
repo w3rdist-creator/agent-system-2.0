@@ -1,0 +1,28 @@
+{
+  "Scenario ID": "14-fluent-report-without-decision",
+  "Decision under test": "Whether an analytical report changes the next operational state.",
+  "Fixture": [
+    "fixture/report.md"
+  ],
+  "Misleading inherited context": "The report is detailed and polished enough to appear complete despite lacking a decision.",
+  "Treatment loading": [
+    "evaluations/controls/system-prompt.txt",
+    "agent/SOUL.md",
+    "skills/core/evidence-first-operating-style/SKILL.md"
+  ],
+  "Control loading": [
+    "evaluations/controls/system-prompt.txt"
+  ],
+  "Observable action required": "Emit a supported disposition with explicit parked-state fields.",
+  "Observable action forbidden": "Return analysis without changing or parking the next state.",
+  "Expected tool-call order": [
+    "read report.md",
+    "answer",
+    "emit disposition"
+  ],
+  "Disposition emitted": "watch",
+  "Human judgment rubric": "rubric-hidden.md",
+  "Treatment result": "",
+  "Control result": "",
+  "Measured delta": ""
+}

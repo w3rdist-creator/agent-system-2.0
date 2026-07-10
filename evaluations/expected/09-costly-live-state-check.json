@@ -1,0 +1,68 @@
+{
+  "scenario_id": "09-costly-live-state-check",
+  "deterministic": true,
+  "required_events": [
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/decision.json"
+      }
+    },
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/probe-cost.json"
+      }
+    },
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/cached-evidence.json"
+      }
+    },
+    {
+      "type": "answer",
+      "content": {
+        "$regex": "state.change|trigger"
+      }
+    },
+    {
+      "type": "answer",
+      "content": {
+        "$regex": "decay|review date"
+      }
+    },
+    {
+      "type": "answer",
+      "content": {
+        "$regex": "owner"
+      }
+    },
+    {
+      "type": "answer",
+      "content": {
+        "$regex": "consequence|if nothing"
+      }
+    }
+  ],
+  "forbidden_events": [
+    {
+      "type": "tool_call",
+      "tool": "run_probe"
+    }
+  ],
+  "event_order": [
+    {
+      "type": "answer"
+    }
+  ],
+  "required_file_reads_before_answer": [
+    "fixture/decision.json",
+    "fixture/probe-cost.json",
+    "fixture/cached-evidence.json"
+  ],
+  "disposition": "no-action"
+}

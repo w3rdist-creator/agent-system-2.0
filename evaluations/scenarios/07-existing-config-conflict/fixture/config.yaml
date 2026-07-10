@@ -1,0 +1,3 @@
+mode: existing
+endpoint: local-adapter
+retries: 4

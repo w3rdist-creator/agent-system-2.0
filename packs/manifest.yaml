@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "license": "CC BY 4.0",
+  "corpus": {
+    "disposition": "contract-only",
+    "pack": "context-spine",
+    "architecture": "Context Spine contains Deep Timeline; Adversarial Canon is its challenge layer.",
+    "payload_release": "1.1-or-separately-reviewed",
+    "disposition_source": "docs/Corpus-Disposition.md"
+  },
+  "packs": {
+    "research": {
+      "status": "shipped",
+      "owner": "w3rdist-creator",
+      "activation_trigger": "Explicit operator installation for a source-grounded research workflow.",
+      "kill_condition": "Demote or uninstall after two reviews with no downstream change and non-zero review cost.",
+      "payload": "packs/research/vault"
+    },
+    "agent-ops": {
+      "status": "shipped",
+      "owner": "w3rdist-creator",
+      "activation_trigger": "Explicit operator installation for governed agent operations.",
+      "kill_condition": "Demote or uninstall when outputs make no verified state change, exceed budget, or duplicate an owned control surface.",
+      "payload": "packs/agent-ops/vault"
+    },
+    "context-spine": {
+      "status": "inert",
+      "owner": "w3rdist-creator if activated",
+      "activation_trigger": "One external user request or two production uses not cleanly served by shipped surfaces, plus a separately passing corpus review.",
+      "kill_condition": "Keep inert or remove any later payload if bounded retrieval, provenance, freshness, licensing, privacy, or annotation preservation fails."
+    },
+    "deep-timeline": {
+      "status": "inert",
+      "owner": "w3rdist-creator if activated",
+      "activation_trigger": "One external user request or two production uses not cleanly served by shipped surfaces, after Context Spine activation.",
+      "kill_condition": "Keep inert or retire if historical analogies lack local context, falsifiers, freshness, or observed retrieval use."
+    },
+    "markets-research-only": {
+      "status": "inert",
+      "owner": "w3rdist-creator if activated",
+      "activation_trigger": "One external user request or two production uses not cleanly served by shipped surfaces, plus separate liability and freshness review.",
+      "kill_condition": "Keep inert or retire on stale authority, absent research-only boundaries, no-edge suppression, or unbounded liability."
+    },
+    "product-os": {
+      "status": "inert",
+      "owner": "w3rdist-creator if activated",
+      "activation_trigger": "One external user request or two production uses not cleanly served by shipped surfaces.",
+      "kill_condition": "Keep inert or retire when it duplicates base project and decision surfaces or has no observed product decision use."
+    },
+    "personal-os": {
+      "status": "inert",
+      "owner": "w3rdist-creator if activated",
+      "activation_trigger": "One external user request or two production uses not cleanly served by shipped surfaces, plus separate universal-doctrine and privacy review.",
+      "kill_condition": "Keep inert or retire if personal context becomes universal doctrine, privacy scope expands, or review burden exceeds use."
+    },
+    "learning-os": {
+      "status": "inert",
+      "owner": "w3rdist-creator if activated",
+      "activation_trigger": "One external user request or two production uses not cleanly served by shipped surfaces, plus separate maintenance review.",
+      "kill_condition": "Keep inert or retire if curricula become stale, duplicate Research, or lack measured learning use."
+    },
+    "software-delivery": {
+      "status": "inert",
+      "owner": "w3rdist-creator if activated",
+      "activation_trigger": "One external user request or two production uses not cleanly served by shipped surfaces.",
+      "kill_condition": "Keep inert or retire when upstream tools already own the workflow or no public-source consumer proves a pack is needed."
+    },
+    "simulation-lab": {
+      "status": "inert",
+      "owner": "w3rdist-creator if activated",
+      "activation_trigger": "One external user request or two production uses not cleanly served by shipped surfaces.",
+      "kill_condition": "Keep inert or retire if simulations escape sandbox labels, lack resolution evidence, or create more review surface than learning."
+    }
+  }
+}

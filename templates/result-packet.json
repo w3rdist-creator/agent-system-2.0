@@ -1,0 +1,27 @@
+{
+  "_template": {
+    "license": "CC BY 4.0",
+    "template": "result-packet",
+    "consumer": "The task owner verifying worker claims and choosing the next state.",
+    "owner": "w3rdist-creator (see MAINTAINERS.md)",
+    "replacement_rationale": "Replaces completion claims without proof; merge only if artifacts, checks, deviations, blockers, and disposition remain explicit."
+  },
+  "license": "CC BY 4.0",
+  "packet_id": "RESULT-YYYY-MM-DD-001",
+  "task_packet_id": "TASK-YYYY-MM-DD-001",
+  "completed_at": "YYYY-MM-DD",
+  "status": "done",
+  "summary": "Bounded result",
+  "artifacts": ["Artifact coordinate"],
+  "checks": [
+    {
+      "command_or_method": "Observable verification",
+      "outcome": "pass",
+      "evidence": "Exact result"
+    }
+  ],
+  "deviations": ["Deviation or none"],
+  "blockers": ["Blocker or none"],
+  "next_disposition": "done",
+  "owner_review_required": true
+}

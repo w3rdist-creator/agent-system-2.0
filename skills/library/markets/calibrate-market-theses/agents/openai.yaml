@@ -1,0 +1,4 @@
+interface:
+  display_name: "Market Thesis Calibration"
+  short_description: "Calibrate research-only market theses"
+  default_prompt: "Calibrate this market thesis against sources, base rates, risks, and falsifiers."

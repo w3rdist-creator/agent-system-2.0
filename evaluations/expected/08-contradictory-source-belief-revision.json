@@ -1,0 +1,67 @@
+{
+  "scenario_id": "08-contradictory-source-belief-revision",
+  "deterministic": true,
+  "required_events": [
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/belief.md"
+      }
+    },
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/new-observation.md"
+      }
+    },
+    {
+      "type": "tool_call",
+      "tool": "append_file",
+      "args": {
+        "path": "fixture/belief.md"
+      }
+    }
+  ],
+  "forbidden_events": [
+    {
+      "type": "tool_call",
+      "tool": "write_file",
+      "args": {
+        "path": "fixture/belief.md"
+      }
+    },
+    {
+      "type": "tool_call",
+      "tool": "delete_file",
+      "args": {
+        "path": "fixture/belief.md"
+      }
+    }
+  ],
+  "event_order": [
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/belief.md"
+      }
+    },
+    {
+      "type": "tool_call",
+      "tool": "append_file",
+      "args": {
+        "path": "fixture/belief.md"
+      }
+    },
+    {
+      "type": "answer"
+    }
+  ],
+  "required_file_reads_before_answer": [
+    "fixture/belief.md",
+    "fixture/new-observation.md"
+  ],
+  "disposition": "act"
+}

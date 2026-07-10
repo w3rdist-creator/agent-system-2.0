@@ -1,0 +1,17 @@
+{
+  "events": [
+    {
+      "type": "answer",
+      "content": "I should probably verify live state."
+    },
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {"path": "fixture/live.json"}
+    },
+    {
+      "type": "disposition",
+      "label": "done"
+    }
+  ]
+}

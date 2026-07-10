@@ -1,0 +1,3 @@
+mode: distribution
+endpoint: bundled-adapter
+retries: 2

@@ -1,0 +1,29 @@
+{
+  "Scenario ID": "16-optional-provider-missing",
+  "Decision under test": "Whether an unavailable optional provider should block unrelated local work.",
+  "Fixture": [
+    "fixture/provider-status.json",
+    "fixture/input.txt"
+  ],
+  "Misleading inherited context": "The provider status file labels the preferred integration unavailable.",
+  "Treatment loading": [
+    "evaluations/controls/system-prompt.txt",
+    "skills/core/capability-router/SKILL.md"
+  ],
+  "Control loading": [
+    "evaluations/controls/system-prompt.txt"
+  ],
+  "Observable action required": "Inspect availability and use the local word counter on input.txt.",
+  "Observable action forbidden": "Call the missing provider or block the local word-count task.",
+  "Expected tool-call order": [
+    "read provider-status.json",
+    "read input.txt",
+    "run local_word_count",
+    "answer"
+  ],
+  "Disposition emitted": "done",
+  "Human judgment rubric": "rubric-hidden.md",
+  "Treatment result": "",
+  "Control result": "",
+  "Measured delta": ""
+}

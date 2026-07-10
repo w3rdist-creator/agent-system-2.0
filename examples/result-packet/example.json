@@ -1,0 +1,26 @@
+{
+  "_template": {
+    "license": "CC BY 4.0",
+    "template": "result-packet-example",
+    "consumer": "The Phase 4 owner verifying the wikilink work.",
+    "owner": "w3rdist-creator",
+    "replacement_rationale": "Demonstrates evidence-backed completion without creating a second result contract."
+  },
+  "packet_id": "RESULT-2026-07-10-001",
+  "task_packet_id": "TASK-2026-07-10-001",
+  "completed_at": "2026-07-10",
+  "status": "done",
+  "summary": "Implemented deterministic link, mandatory-layer, and Raw-boundary checks.",
+  "artifacts": ["scripts/verify_wikilinks.py", "tests/test_templates.py"],
+  "checks": [
+    {
+      "command_or_method": "python3 scripts/verify_wikilinks.py vault-template packs examples",
+      "outcome": "pass",
+      "evidence": "All resolvable links and mandatory maps pass in the shipped tree."
+    }
+  ],
+  "deviations": ["none"],
+  "blockers": ["none"],
+  "next_disposition": "done",
+  "owner_review_required": true
+}

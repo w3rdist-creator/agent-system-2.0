@@ -1,0 +1,2 @@
+license,correction_id,recorded_at,operator_instruction,evidence_handle,prior_hypothesis,hypothesis_update,repeated_evidence_count,explicit_strong_instruction,standing_doctrine_before,standing_doctrine_after,changed_by,review_due,supersedes
+CC BY 4.0,CORRECTION-EXAMPLE,YYYY-MM-DD,"Observed correction",evidence-coordinate,"Prior bounded hypothesis","Updated hypothesis only",1,false,"Existing doctrine","unchanged pending repetition",ACCOUNTABLE-OWNER,YYYY-MM-DD,

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bounded Orchestration"
+  short_description: "Coordinate tools and workers"
+  default_prompt: "Choose the lightest execution mode and coordinate this work with verified handoffs."

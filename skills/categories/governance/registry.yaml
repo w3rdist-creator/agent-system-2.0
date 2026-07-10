@@ -1,0 +1,5 @@
+{"category":"governance","skills":[
+  {"name":"capability-router","description":"Route a request through the bounded Level-0 category index, one selected registry, and one narrow skill body. Use at startup, when a capability is ambiguous, or when an optional provider may be missing.","path":"skills/core/capability-router/SKILL.md"},
+  {"name":"evidence-first-operating-style","description":"Run ambiguous, investigative, strategic, diagnostic, consequential, or high-stakes work through an evidence-first decision loop with proportional probes, verified completion, and a closed disposition.","path":"skills/core/evidence-first-operating-style/SKILL.md"},
+  {"name":"run-bounded-agent-labs","description":"Design and run controlled agent experiments with one mutation surface, fixed budget, independent evaluator, objective score or explicit rubric, and keep-discard-revert rules. Use for autonomous optimization or sandbox trials.","path":"skills/library/governance/run-bounded-agent-labs/SKILL.md"}
+]}

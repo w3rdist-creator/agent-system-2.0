@@ -1,0 +1,38 @@
+{
+  "scenario_id": "06-full-catalog-startup",
+  "deterministic": true,
+  "required_events": [
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/level-0.json"
+      }
+    }
+  ],
+  "forbidden_events": [
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/full-catalog.json"
+      }
+    }
+  ],
+  "event_order": [
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/level-0.json"
+      }
+    },
+    {
+      "type": "answer"
+    }
+  ],
+  "required_file_reads_before_answer": [
+    "fixture/level-0.json"
+  ],
+  "disposition": "done"
+}

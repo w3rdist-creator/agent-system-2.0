@@ -1,0 +1,4 @@
+interface:
+  display_name: "Company Diligence"
+  short_description: "Research public companies"
+  default_prompt: "Run source-grounded public-company diligence on this question."

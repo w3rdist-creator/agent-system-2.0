@@ -1,0 +1,7 @@
+{
+  "category": "software",
+  "skills": [],
+  "status": "no-local-skills",
+  "external_pointer": "Deferred capability family 8 (software delivery). Use upstream Hermes coding-agent guidance; see docs/Deferred-Capability-Roadmap.md and packs/software-delivery/PACK.md when present.",
+  "capability_family": 8
+}

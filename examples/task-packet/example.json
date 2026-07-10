@@ -1,0 +1,29 @@
+{
+  "_template": {
+    "license": "CC BY 4.0",
+    "template": "task-packet-example",
+    "consumer": "A bounded worker implementing the Phase 4 wikilink verifier.",
+    "owner": "w3rdist-creator",
+    "replacement_rationale": "Demonstrates the governed task packet without creating a second template."
+  },
+  "packet_id": "TASK-2026-07-10-001",
+  "created_at": "2026-07-10",
+  "owner": "w3rdist-creator",
+  "consumer": "phase-4-executor",
+  "objective": "Implement deterministic vault wikilink and mandatory-layer verification.",
+  "authority": {
+    "allowed": ["Edit scripts/verify_wikilinks.py and tests/test_templates.py"],
+    "forbidden": ["Commit, publish, or change source repositories"]
+  },
+  "scope": {
+    "inputs": ["vault-template", "packs", "examples"],
+    "write_paths": ["scripts/verify_wikilinks.py", "tests/test_templates.py"],
+    "out_of_scope": ["Pack implementation scheduled for Phase 5"]
+  },
+  "deliverables": ["Wikilink verifier", "Negative and positive unit tests"],
+  "acceptance_checks": ["Missing links fail", "Planned links pass", "Mandatory vault maps exist"],
+  "dependencies": ["Python 3 standard library"],
+  "risks": ["Duplicate note stems could make a link ambiguous; report ambiguity instead of guessing"],
+  "due_or_review_at": "2026-07-10",
+  "return_contract": "Return examples/result-packet/example.json with exact checks and disposition."
+}

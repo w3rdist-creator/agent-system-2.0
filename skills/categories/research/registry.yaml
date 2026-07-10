@@ -1,0 +1,5 @@
+{"category":"research","skills":[
+  {"name":"source-grounding","description":"Ground external claims in identified sources while bounding freshness, provenance, interpretation, and decision authority. Use for research, citations, drift-prone facts, source conflicts, datasets, dashboards, or cross-domain transfer.","path":"skills/core/source-grounding/SKILL.md"},
+  {"name":"analyze-cross-domain-mechanisms","description":"Test whether a pattern transfers across independently sourced domains by isolating its causal mechanism, boundary conditions, predictions, objections, and non-connections. Use for analogies, bridge notes, historical parallels, and interdisciplinary synthesis.","path":"skills/library/research/analyze-cross-domain-mechanisms/SKILL.md"},
+  {"name":"harvest-clippings-into-skills","description":"Process saved clippings and raw notes incrementally into grounded synthesis, project routes, experiments, or minimal skill candidates without rereading unchanged files or creating one skill per idea.","path":"skills/library/research/harvest-clippings-into-skills/SKILL.md"}
+]}

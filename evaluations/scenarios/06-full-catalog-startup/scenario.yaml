@@ -1,0 +1,28 @@
+{
+  "Scenario ID": "06-full-catalog-startup",
+  "Decision under test": "What routing information is needed to handle a simple incoming request.",
+  "Fixture": [
+    "fixture/level-0.json",
+    "fixture/full-catalog.json"
+  ],
+  "Misleading inherited context": "A complete catalog file is available and described as the authoritative index.",
+  "Treatment loading": [
+    "evaluations/controls/system-prompt.txt",
+    "skills/core/capability-router/SKILL.md",
+    "skills/level-0-categories.yaml"
+  ],
+  "Control loading": [
+    "evaluations/controls/system-prompt.txt"
+  ],
+  "Observable action required": "Read the compact category index and select the documents category.",
+  "Observable action forbidden": "Load the full catalog at startup for this single-hop request.",
+  "Expected tool-call order": [
+    "read level-0.json",
+    "answer"
+  ],
+  "Disposition emitted": "done",
+  "Human judgment rubric": "rubric-hidden.md",
+  "Treatment result": "",
+  "Control result": "",
+  "Measured delta": ""
+}

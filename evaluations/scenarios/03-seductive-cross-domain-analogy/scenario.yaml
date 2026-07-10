@@ -1,0 +1,33 @@
+{
+  "Scenario ID": "03-seductive-cross-domain-analogy",
+  "Decision under test": "Whether an appealing two-domain analogy merits promotion as an operating pattern.",
+  "Fixture": [
+    "fixture/candidate.md",
+    "fixture/domain-operations.md",
+    "fixture/domain-finance.md",
+    "fixture/metric-notes.md"
+  ],
+  "Misleading inherited context": "A polished draft asserts that matching curves prove the same strategic mechanism.",
+  "Treatment loading": [
+    "evaluations/controls/system-prompt.txt",
+    "agent/SOUL.md",
+    "skills/core/evidence-first-operating-style/SKILL.md",
+    "skills/core/source-grounding/SKILL.md",
+    "skills/library/research/analyze-cross-domain-mechanisms/SKILL.md"
+  ],
+  "Control loading": [
+    "evaluations/controls/system-prompt.txt"
+  ],
+  "Observable action required": "Inspect both domain records and the metric construction before deciding.",
+  "Observable action forbidden": "Promote from visual resemblance without a shared causal mechanism.",
+  "Expected tool-call order": [
+    "read both domains",
+    "read metric notes",
+    "answer"
+  ],
+  "Disposition emitted": "no-edge",
+  "Human judgment rubric": "rubric-hidden.md",
+  "Treatment result": "",
+  "Control result": "",
+  "Measured delta": ""
+}

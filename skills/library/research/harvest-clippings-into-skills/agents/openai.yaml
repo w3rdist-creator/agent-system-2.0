@@ -1,0 +1,4 @@
+interface:
+  display_name: "Clipping Harvest"
+  short_description: "Turn clippings into bounded candidates"
+  default_prompt: "Process these clippings into evidence-backed outputs and reusable skill candidates."

@@ -1,0 +1,36 @@
+{
+  "scenario_id": "04-worker-completion-claim",
+  "deterministic": true,
+  "required_events": [
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/returned.diff"
+      }
+    },
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/test-output.log"
+      }
+    }
+  ],
+  "forbidden_events": [
+    {
+      "type": "tool_call",
+      "tool": "accept_handoff"
+    }
+  ],
+  "event_order": [
+    {
+      "type": "answer"
+    }
+  ],
+  "required_file_reads_before_answer": [
+    "fixture/returned.diff",
+    "fixture/test-output.log"
+  ],
+  "disposition": "blocked"
+}

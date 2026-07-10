@@ -1,0 +1,2 @@
+license,use_id,date,pattern_or_claim_id,source_coordinate,use_type,downstream_artifact,decision_delta,owner,last_used_at,review_due,disposition,demotion_reason
+CC BY 4.0,USE-2026-07-10-001,2026-07-10,PAT-2026-07-10-001,"second-brain-os-powerpack:vault-addons/System/Loop Library/Source To Synthesis Loop.md",pack-design,"packs/research/vault/Research/Queues/Source Queue.md","Added mandatory exit disposition",Phase 5 executor,2026-07-10,2026-10-10,keep,"Initial real use; demote if the review finds no later use or changed artifact"

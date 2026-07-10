@@ -1,0 +1,4 @@
+interface:
+  display_name: "Quant Signal Audit"
+  short_description: "Audit signals and backtests"
+  default_prompt: "Audit this signal or backtest for leakage, costs, capacity, and robustness."

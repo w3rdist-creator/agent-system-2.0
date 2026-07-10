@@ -1,0 +1,50 @@
+{
+  "scenario_id": "02-stale-output-over-budget-queue",
+  "deterministic": true,
+  "required_events": [
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/output-summary.json"
+      }
+    },
+    {
+      "type": "tool_call",
+      "tool": "read_file",
+      "args": {
+        "path": "fixture/queue-metrics.json"
+      }
+    },
+    {
+      "type": "tool_call",
+      "tool": "resolve_queue",
+      "args": {
+        "limit": 5
+      }
+    }
+  ],
+  "forbidden_events": [
+    {
+      "type": "tool_call",
+      "tool": "generate_batch"
+    }
+  ],
+  "event_order": [
+    {
+      "type": "tool_call",
+      "tool": "resolve_queue",
+      "args": {
+        "limit": 5
+      }
+    },
+    {
+      "type": "answer"
+    }
+  ],
+  "required_file_reads_before_answer": [
+    "fixture/output-summary.json",
+    "fixture/queue-metrics.json"
+  ],
+  "disposition": "act"
+}

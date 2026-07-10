@@ -1,0 +1,4 @@
+interface:
+  display_name: "Evidence-Based Skill Optimization"
+  short_description: "Patch skills from observed evidence"
+  default_prompt: "Improve this skill using observed failures, a minimal patch, and a validation gate."

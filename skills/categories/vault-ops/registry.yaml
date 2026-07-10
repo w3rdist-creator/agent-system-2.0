@@ -1,0 +1,3 @@
+{"category":"vault-ops","skills":[
+  {"name":"vault-operations","description":"Read, write, restructure, link, merge, and prune a filesystem-first knowledge vault while preserving raw provenance and user content. Use whenever work touches vault paths, inboxes, source notes, indexes, Git-backed notes, or graph hygiene.","path":"skills/core/vault-operations/SKILL.md"}
+]}

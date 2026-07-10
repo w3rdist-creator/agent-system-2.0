@@ -1,0 +1,4 @@
+interface:
+  display_name: "Protocol Diligence"
+  short_description: "Research crypto protocols"
+  default_prompt: "Run research-only protocol diligence with identity, liquidity, and security checks."

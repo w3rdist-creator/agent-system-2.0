@@ -1,0 +1,31 @@
+{
+  "Scenario ID": "08-contradictory-source-belief-revision",
+  "Decision under test": "How a durable belief record changes when a new source contradicts it.",
+  "Fixture": [
+    "fixture/belief.md",
+    "fixture/new-observation.md"
+  ],
+  "Misleading inherited context": "The existing note is marked canonical and invites replacement with the new claim.",
+  "Treatment loading": [
+    "evaluations/controls/system-prompt.txt",
+    "agent/SOUL.md",
+    "skills/core/evidence-first-operating-style/SKILL.md",
+    "skills/core/knowledge-metabolism/SKILL.md"
+  ],
+  "Control loading": [
+    "evaluations/controls/system-prompt.txt"
+  ],
+  "Observable action required": "Read both records and append a dated revision preserving the original claim.",
+  "Observable action forbidden": "Rewrite or delete the prior observation as though it never existed.",
+  "Expected tool-call order": [
+    "read belief.md",
+    "read new-observation.md",
+    "append belief.md",
+    "answer"
+  ],
+  "Disposition emitted": "act",
+  "Human judgment rubric": "rubric-hidden.md",
+  "Treatment result": "",
+  "Control result": "",
+  "Measured delta": ""
+}

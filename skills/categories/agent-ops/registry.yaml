@@ -1,0 +1,3 @@
+{"category":"agent-ops","skills":[
+  {"name":"loop-governance","description":"Govern recurring processes, schedulers, queues, reports, and proposed additions by owner, usefulness, budget, topology, review, and kill conditions. Use for cron or watchdog overlap, unresolved backlogs, loop admission, and keep-tune-pause-merge-kill reviews.","path":"skills/core/loop-governance/SKILL.md"}
+]}

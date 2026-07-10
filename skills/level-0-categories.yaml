@@ -1,0 +1,13 @@
+[
+{"name":"research","scope":"Sources, claims, patterns, timelines, and retrieval.","escalation":"Use governance for authority limits."},
+{"name":"vault-ops","scope":"Vault structure, capture, links, Git, and promotion.","escalation":"Use knowledge for belief changes."},
+{"name":"knowledge","scope":"Memory routing, synthesis, belief revision, and skill lifecycle.","escalation":"Use research for source disputes."},
+{"name":"agent-ops","scope":"Hermes health, queues, reports, scheduling, and maintenance.","escalation":"Use integrations for tool setup."},
+{"name":"delegation","scope":"Workers, task packets, kanban, acceptance, and handoffs.","escalation":"Use software for code delivery."},
+{"name":"software","scope":"Planning, tests, debugging, builds, reviews, and version control.","escalation":"Use delegation for worker topology."},
+{"name":"documents-media","scope":"Documents, sheets, slides, browser, media, and creative work.","escalation":"Use research for factual claims."},
+{"name":"integrations","scope":"Tools, MCP, plugins, providers, and secret-safe setup.","escalation":"Use governance for access approval."},
+{"name":"governance","scope":"Authority, admission, measurement, audit, risk, and calibration.","escalation":"Request a human for missing authority."},
+{"name":"deployment","scope":"Local, cloud, hybrid, VPS, and model deployment patterns.","escalation":"Use agent-ops for runtime health."},
+{"name":"markets","scope":"Research-only diligence, falsification, prediction, and calibration.","escalation":"Use governance for risk boundaries."}
+]

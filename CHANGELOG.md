@@ -2,6 +2,26 @@
 
 This changelog preserves the build narrative because the public export intentionally contains one sanitized initial commit.
 
+## 1.3.1 — 2026-07-11
+
+Release 1.3.1 adds a first-timer onboarding layer without changing the certified behavior surface:
+
+- **First-hour path:** adds a literal zero-to-first-session guide with exact installer milestones,
+  the manual Hermes configuration edit, plugin activation boundary, a disposition-bearing first
+  task, and one hand-run Inbox route.
+- **Refusals with exits:** documents the actual fail-closed install, version, live guard,
+  completion, metabolism, upgrade, and `.incoming` messages with a plain-language resolution for
+  each.
+- **Operator-owned loop wiring:** adds a print-only POSIX helper that detects an available
+  scheduler and renders absolute wrapper/schedule plans for metabolism, recert transcripts, and
+  telemetry. It never writes or registers a job.
+- **Staged team vocabulary:** keeps the closed seven-label set and its boundary rules while
+  separating the four common first-day labels from the three governance labels.
+
+No doctrine, evaluation scenario, expected result, or enforcement surface changed. The Release
+1.3 certificates therefore remain valid for their named models, settings, runner, date, and
+accounting rule.
+
 ## 1.3.0 — 2026-07-11
 
 Release 1.3 earns the distribution's first certificate on its current vocabulary, strengthens the

@@ -2,6 +2,8 @@
 
 This gets you from zero to a working agent-and-vault setup in about fifteen minutes, and tells you exactly where the edges are. It assumes nothing about your work domain: what you're installing is general infrastructure — an operating stance for your agent, a routed skill system, a governed vault, and templates — that you then build your own system on top of.
 
+Setting up alone for the first time? Start with [FIRST-HOUR.md](FIRST-HOUR.md).
+
 ## What you actually get
 
 - **An operating stance** (`agent/SOUL.md` + authority boundaries): a compact contract for how your agent decides, verifies, and reports — including a closed vocabulary of seven "disposition" labels every piece of work ends with (`act`, `done`, `blocked`, `needs-human`, ...). You'll see these constantly; there's a cheat sheet below.
@@ -52,17 +54,31 @@ If `verify-install.sh` fails, it tells you the exact missing step. Open the vaul
 
 ## The disposition cheat sheet
 
-Every unit of work ends with exactly one of these. They're how you scan agent output at a glance:
+Every unit of work ends with exactly one label. They're how you scan agent output at a glance.
+
+### The four you'll see on day one
 
 | Label | Means |
 |---|---|
-| `act` | an action or recorded revision awaits downstream application or verification |
 | `done` | the requested outcome itself is verified complete |
+| `act` | an action or recorded revision awaits downstream application or verification |
 | `blocked` | a dependency, approval, or disputed status or completion claim prevents progress |
 | `needs-human` | a judgment or authority call is yours to make |
-| `no-action` | after investigation, deliberately leave world state unchanged without rejecting a candidate |
+
+### The three that arrive with governance
+
+| Label | Means |
+|---|---|
 | `watch` | parked, with a named condition that reopens it |
+| `no-action` | after investigation, deliberately leave world state unchanged without rejecting a candidate |
 | `kill` | reject a forward-looking proposal or retire a mechanism, never dispute a completion claim |
+
+Boundary rules: verified completion is `done`, while a completed intermediate revision that still
+needs application is `act`. A missing dependency or disputed completion claim is `blocked`; a
+judgment or authority decision only a person can make is `needs-human`. `watch` must name its
+return condition. `no-action` leaves state unchanged after investigation; it does not reject a
+candidate. `kill` rejects a forward-looking proposal or retires a mechanism; it never disputes a
+completion claim.
 
 Deprecated aliases in old ledgers: `merge` means `done`, `defer` means `watch`, and `no-edge` means `no-action`.
 

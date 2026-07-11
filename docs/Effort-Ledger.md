@@ -823,3 +823,32 @@ payload as `.incoming` without clobbering the user-modified file, reported the u
 and manual plugin activation boundary, and completed preservation-first uninstall checks. `git
 diff --check` produced no output. No staging, commit, export, remote action, push, CI judgment, or
 tag was attempted; staging was deliberately skipped under the operator's sandbox instruction.
+
+## Release 1.3.1 Phase Z onboarding command evidence
+
+Phase Z adds only the first-timer onboarding layer: `FIRST-HOUR.md`, the refusal-to-resolution
+guide, a print-only three-loop wiring helper and its tests, an audience-staged presentation in
+`TEAM-QUICKSTART.md`, the early README split between solo setup and team adoption, and release
+bookkeeping. The phase deliberately leaves `agent/`, `skills/`, `templates/`, both evaluation
+scenario surfaces, and enforcement code byte-for-byte unchanged. Release 1.3's paired certificates
+remain the governing evidence; no new behavioral claim is inferred from documentation work.
+
+The loop helper selects one available scheduler surface without registering it, prints three
+absolute-path wrappers, carries `EVAL_TRANSCRIPT_DIR` from recert into telemetry, and schedules
+metabolism at 03:05, recert at 03:25, and telemetry at 03:50. Its fixture test snapshots the entire
+test tree before and after execution to prove the helper creates and modifies nothing. Invalid
+arguments fail nonzero; valid plans finish with the operator-ownership reminder.
+
+The standalone definition-of-done commands all passed: `python3 -m unittest discover -s tests`
+ran 132 tests; repository structure, closed denominators, routing, packs, placeholders, script
+coverage, and shell safety passed; the privacy scan passed across 389 text inputs; the core context
+budget remained Level 0 394/400 and operational core 2,998/3,000; and all 16 scenario schemas and
+observable-action assertion sets passed unchanged.
+
+`bash scripts/dev-gate.sh` passed end to end with the same 132 tests plus the explicit four-test
+Hermes plugin leg. Its lifecycle replay planned 117 operations without writes, installed and
+verified 113 base files, failed closed before the simulated manual configuration addition,
+verified 143 files after both packs, preserved the modified owned file beside `.incoming`, and
+completed uninstall preservation checks. `git diff --check` produced no output. Per the operator's
+sandbox instruction, Phase Z is left unstaged and uncommitted for advisor review; no export,
+remote action, push, CI judgment, or tag was attempted.

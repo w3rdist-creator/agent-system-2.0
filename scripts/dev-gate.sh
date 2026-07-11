@@ -25,6 +25,7 @@ python3 scripts/install_manifest.py --help >/dev/null
 bash -n scripts/publication-gate.sh
 bash -n scripts/export-public.sh
 bash -n scripts/update-gate.sh
+bash -n scripts/wire-loops.sh
 
 python3 - "$vault" "$hermes_home" "$uninstall_output" "$dry_run_output" <<'PY'
 from pathlib import Path

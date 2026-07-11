@@ -2,7 +2,7 @@
 
 Agent System 2.0 is an evidence-first distribution for **Hermes Agent**, not a platform-neutral agent framework. (Its formal project and attribution name is the Evidence-First Hermes Distribution; the installed namespace remains `evidence-first`.) It installs a compact operating stance, a three-level routed skill catalog, a layered vault, governed templates, and two optional packs into a Hermes v0.18.x environment while keeping distribution-owned files separate from files Hermes owns.
 
-**New user? Start with the [Team Quickstart](TEAM-QUICKSTART.md)** — install to first working session in fifteen minutes, plus the honest list of known boundaries.
+**First-time agent setup starts with [FIRST-HOUR.md](FIRST-HOUR.md); team adoption starts with the [Team Quickstart](TEAM-QUICKSTART.md).**
 
 The project is a bounded successor candidate to five earlier public repositories. It is justified by self-governance, selective loading, safe ownership, and measurable behavior—not by shipping more folders. The repository passed its own admission tests in the [1.0 improvement proposal](examples/improvement-proposal--this-repository.md), [1.1 improvement proposal](examples/improvement-proposal--release-1.1.md), [1.2 improvement proposal](examples/improvement-proposal--release-1.2.md), [1.3 improvement proposal](examples/improvement-proposal--release-1.3.md), and [loop contract](examples/loop-contract--this-repository.md).
 

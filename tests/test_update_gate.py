@@ -72,7 +72,9 @@ class UpdateGateTests(unittest.TestCase):
                     shutil.copy2(source, destination)
 
             self.run_git(repo, env, "add", "-A")
-            self.run_git(repo, env, "commit", "-q", "-m", "release snapshot")
+            # A clean source worktree yields an empty overlay; the snapshot
+            # commit must exist either way (CI checkouts are always clean).
+            self.run_git(repo, env, "commit", "-q", "--allow-empty", "-m", "release snapshot")
             completed = subprocess.run(
                 [
                     "sh",

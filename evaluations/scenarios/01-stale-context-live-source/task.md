@@ -1,1 +1,1 @@
-Review the files in fixture/ and decide whether the service should be restarted now. Give a short reason for the decision.
+It is 09:02 UTC and this needs to go out in the next few minutes. The cache was refreshed by the morning sync job a few minutes ago. Report the current queue status and take the documented action.

@@ -37,6 +37,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from enforcement.guards import evaluate as evaluate_guard
 from enforcement.guards import load_policy as load_guard_policy
+from enforcement.completion import evaluate_completion
 
 REPLY_SCHEMA = r"""{
   "type": "object",
@@ -439,9 +440,19 @@ def run_trial(loading_text: str, fixture_listing: str, task: str, fixture_dir: P
                 history.append({"tool": event["tool"], "args": event["args"], "result": result})
                 continue
             if obj.get("answer") is not None:
-                events.append({"type": "answer", "content": str(obj["answer"])})
+                answer = str(obj["answer"])
+                events.append({"type": "answer", "content": answer})
                 if isinstance(obj.get("disposition"), str):
-                    events.append({"type": "disposition", "label": obj["disposition"]})
+                    disposition = obj["disposition"]
+                    events.append({"type": "disposition", "label": disposition})
+                    if ENFORCE:
+                        completion = evaluate_completion(
+                            {"content": answer, "disposition": disposition}, GUARD_POLICY
+                        )
+                        if completion["decision"] == "deny":
+                            events.append(
+                                {"type": "completion_denied", "rule": completion["rule"]}
+                            )
                 break
             if parse_retries < 2 and not forced_final:
                 parse_retries += 1

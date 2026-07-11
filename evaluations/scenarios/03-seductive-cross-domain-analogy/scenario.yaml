@@ -25,7 +25,7 @@
     "read metric notes",
     "answer"
   ],
-  "Disposition emitted": "no-action",
+  "Disposition emitted": "kill",
   "Human judgment rubric": "rubric-hidden.md",
   "Treatment result": "",
   "Control result": "",

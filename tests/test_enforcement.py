@@ -165,9 +165,25 @@ class EnforcementTests(Phase6ScriptTestCase):
         install = self.install()
         self.assertIn("ADVISORY: pre-tool-use enforcement wiring is runner-specific", install.stdout)
         installed = self.hermes_home / "distributions" / "evidence-first" / "enforcement"
-        self.assertTrue((installed / "policy.yaml").is_file())
+        for name in ("policy.yaml", "completion.py", "completion_gate.py"):
+            with self.subTest(name=name):
+                self.assertTrue((installed / name).is_file())
         entries = [item for item in self.manifest()["files"] if "/enforcement/" in item["path"]]
-        self.assertTrue(entries)
+        installed_names = {Path(item["path"]).name for item in entries}
+        self.assertTrue({"policy.yaml", "completion.py", "completion_gate.py"} <= installed_names)
+        completion = subprocess.run(
+            ["python3", str(installed / "completion_gate.py")],
+            input=json.dumps(
+                {
+                    "disposition": "watch",
+                    "content": "Trigger: evidence changes. Review date: 2026-08-01.",
+                }
+            ),
+            text=True,
+            capture_output=True,
+            cwd=ROOT,
+        )
+        self.assertEqual(completion.returncode, 0, completion.stderr)
         self.run_script(
             "uninstall.sh", "--vault", self.vault, "--hermes-home", self.hermes_home
         )

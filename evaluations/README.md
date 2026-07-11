@@ -8,7 +8,9 @@ Each scenario uses the same model, model version, tools, fixture, and `task.md` 
 
 Every scenario runs three trials per arm. Deterministic treatment assertions pass only when all three treatment trials pass. A scenario has a confirmed delta only when treatment passes 3/3 and control fails at least 2/3. Publication requires at least eight surviving scenarios with confirmed deltas, unless the operator records a signed override and rationale. Paired model runs are a release gate, not a CI gate; CI runs schema validation and never fabricates model results.
 
-A scenario that passes in both arms is baseline behavior, not distribution evidence. It must be redesigned to discriminate contribution or removed from the surviving suite and from doctrine claims.
+A scenario that passes in both arms is baseline behavior, not distribution evidence, and is redesigned to discriminate contribution. If genuine redesigns still pass both arms, the scenario is marked baseline-absorbed: it remains in the suite as a regression canary, is excluded from surviving-suite delta accounting, and makes its mapped doctrine lines pruning candidates for the next release.
+
+On 2026-07-10, scenarios 01 and 05 were marked baseline-absorbed after two rounds on gpt-5.6-sol high. Their improved round-2 forms remain as canaries.
 
 ## Scenario and assertion separation
 

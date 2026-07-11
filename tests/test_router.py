@@ -56,10 +56,24 @@ class RouterContractTests(unittest.TestCase):
         }
         self.assertEqual(len(existing_ids), 16)
         for entry in mapping:
-            self.assertEqual(set(entry), {"line", "scenarios"})
+            self.assertTrue(set(entry) <= {"line", "scenarios", "pruning_candidate"})
+            self.assertTrue({"line", "scenarios"} <= set(entry))
             self.assertIsInstance(entry["scenarios"], list)
             self.assertTrue(entry["scenarios"])
             self.assertTrue(set(entry["scenarios"]) <= existing_ids)
+            candidate = entry.get("pruning_candidate")
+            if candidate is not None:
+                self.assertEqual(
+                    set(candidate),
+                    {"baseline_absorbed_scenarios", "model", "reasoning", "date"},
+                )
+                self.assertTrue(candidate["baseline_absorbed_scenarios"])
+                self.assertTrue(
+                    set(candidate["baseline_absorbed_scenarios"]) <= set(entry["scenarios"])
+                )
+                self.assertTrue(
+                    all(candidate[field] for field in ("model", "reasoning", "date"))
+                )
 
     def test_all_core_skills_exist_at_declared_paths(self):
         for relative in (

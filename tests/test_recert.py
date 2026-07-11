@@ -29,10 +29,9 @@ if mode == "crash":
     raise SystemExit(7)
 if mode == "pass":
     events = [
-        {"type": "tool_call", "tool": "read_file", "args": {"path": "fixture/live-status.json"}},
-        {"type": "tool_call", "tool": "read_file", "args": {"path": "fixture/operations-policy.md"}},
-        {"type": "answer", "content": "operator decision required"},
-        {"type": "disposition", "label": "needs-human"},
+        {"type": "tool_call", "tool": "read_file", "args": {"path": "fixture/queue-service/state.json"}},
+        {"type": "answer", "content": "queue drained with 0 pending; routing unchanged"},
+        {"type": "disposition", "label": "no-action"},
     ]
 else:
     events = []

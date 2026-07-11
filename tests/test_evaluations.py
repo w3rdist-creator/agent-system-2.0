@@ -18,12 +18,22 @@ from scripts.evaluation_lib import (
     validate_result_row,
     validate_scenario_dir,
 )
+from scripts.evaluate_scenarios import paired_run_report_lines
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class ScenarioSchemaTests(unittest.TestCase):
+    def _copied_scenario(self, temporary: str, source_id: str) -> Path:
+        evaluations = Path(temporary) / "evaluations"
+        scenario = evaluations / "scenarios" / source_id
+        expected = evaluations / "expected"
+        shutil.copytree(ROOT / "evaluations" / "scenarios" / source_id, scenario)
+        expected.mkdir(parents=True)
+        shutil.copy2(ROOT / "evaluations" / "expected" / f"{source_id}.json", expected)
+        return scenario
+
     def test_broken_scenario_is_rejected(self):
         source_id = "01-stale-context-live-source"
         with tempfile.TemporaryDirectory() as temporary:
@@ -52,6 +62,52 @@ class ScenarioSchemaTests(unittest.TestCase):
             data["Disposition emitted"] = "no-edge"
             (scenario / "scenario.yaml").write_text(json.dumps(data), encoding="utf-8")
             validate_scenario_dir(scenario)
+
+    def test_well_formed_baseline_absorbed_is_accepted(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            scenario = self._copied_scenario(temporary, "02-stale-output-over-budget-queue")
+            data = load_json_yaml(scenario / "scenario.yaml")
+            data["Baseline absorbed"] = {
+                "model": "gpt-5.6-sol",
+                "reasoning": "high",
+                "date": "2026-07-10",
+                "rounds": 2,
+            }
+            (scenario / "scenario.yaml").write_text(json.dumps(data), encoding="utf-8")
+            validate_scenario_dir(scenario)
+
+    def test_malformed_baseline_absorbed_is_rejected(self):
+        malformed = (
+            None,
+            "not-an-object",
+            {"model": "gpt-5.6-sol", "reasoning": "high", "date": "2026-07-10"},
+            {"model": "", "reasoning": "high", "date": "2026-07-10", "rounds": 2},
+            {"model": "gpt-5.6-sol", "reasoning": "high", "date": "July 10", "rounds": 2},
+            {"model": "gpt-5.6-sol", "reasoning": "high", "date": "2026-07-10", "rounds": True},
+        )
+        for value in malformed:
+            with self.subTest(value=value), tempfile.TemporaryDirectory() as temporary:
+                scenario = self._copied_scenario(temporary, "02-stale-output-over-budget-queue")
+                data = load_json_yaml(scenario / "scenario.yaml")
+                data["Baseline absorbed"] = value
+                (scenario / "scenario.yaml").write_text(json.dumps(data), encoding="utf-8")
+                with self.assertRaisesRegex(ValidationError, "Baseline absorbed"):
+                    validate_scenario_dir(scenario)
+
+
+class HarnessReportingTests(unittest.TestCase):
+    def test_baseline_absorbed_is_excluded_from_delta_arithmetic_and_warning(self):
+        absorbed = "01-stale-context-live-source"
+        rows = [
+            {"scenario_id": absorbed, "confirmed_delta": False, "treatment_passes": 3, "control_passes": 3},
+            {"scenario_id": "02-survives", "confirmed_delta": True, "treatment_passes": 3, "control_passes": 0},
+            {"scenario_id": "03-survives", "confirmed_delta": False, "treatment_passes": 2, "control_passes": 0},
+        ]
+        lines = paired_run_report_lines(rows, {absorbed})
+        self.assertEqual(
+            lines,
+            ["Confirmed deltas: 1/2 surviving (threshold: 8); baseline-absorbed: 01 (excluded)"],
+        )
 
 
 class TraceAssertionTests(unittest.TestCase):

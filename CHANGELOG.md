@@ -2,6 +2,17 @@
 
 This changelog preserves the build narrative because the public export intentionally contains one sanitized initial commit.
 
+## 1.2.0 — 2026-07-10
+
+Release 1.2 completes the enforcement pair and adds a preservation-first path between releases:
+
+- **Completion gate:** pairs the 1.1 pre-tool-use hook on the way in with a fail-closed completion hook on the way out; alias-normalized `watch` and `no-action` answers must surface both a state-change trigger and a review or decay date, while the regex check honestly verifies presence rather than quality.
+- **Upgrade path:** migrates old manifests to schema 2, replaces untouched distribution files, delivers changed payload beside user-modified files as `.incoming`, adds and retires tracked files safely, and never edits `config.yaml`; installed packs and user content are outside upgrade scope.
+- **Evaluation-suite maintenance:** scenarios 01 and 05 were redesigned because they went baseline on gpt-5.6-sol high. Two live-probed redesign rounds passed both arms; both are marked `Baseline absorbed`, retained as regression canaries, excluded from surviving delta accounting, and their mapped SOUL lines are annotated as pruning candidates for 1.3.
+- **Disposition boundary:** rejecting a proposal, candidate, or mechanism is `kill`; `no-action` means deliberately leaving world state unchanged after investigation. Scenario 03 was realigned to `kill` under that rule.
+
+- **Evaluation status (2026-07-10):** Paired 96-trial run on gpt-5.6-sol reasoning high, 2026-07-10, checked in at evaluations/results/run-2026-07-10-gpt-5.6-sol-1.2.csv: 6/14 surviving confirmed deltas (below the fixed threshold of 8; operator-directed release override recorded per-row), treatment 3/3 on 9/16; the kill/no-action boundary rule converted scenarios 03, 10, and 13 into confirmed deltas; scenarios 04 and 08 each lost one trial to blocked-vs-kill and act-vs-done label blurs, recorded as 1.3 boundary data. Scenarios 01 and 05: two live-probed redesign rounds passed both arms; both marked Baseline absorbed (gpt-5.6-sol high, 2026-07-10), retained as regression canaries, excluded from surviving delta accounting; tuning record at evaluations/results/tuning-2026-07-10-gpt-5.6-sol-scenarios-01-05.md; their SOUL lines are annotated pruning candidates for 1.3. Full dev-gate green including the new upgrade leg; a real v1.1.0-to-1.2 upgrade was verified by the advisor (user-modified SOUL.md preserved byte-for-byte, .incoming supersession delivered, config.yaml untouched, manifest schema 2).
+
 ## 1.1.0 — 2026-07-10
 
 Release 1.1 adds the distribution's machine enforcement and operating metabolism without expanding its ownership boundary:

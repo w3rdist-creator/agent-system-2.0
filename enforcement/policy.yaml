@@ -13,5 +13,30 @@
   },
   "caps": {
     "default_retrieval_limit": 25
+  },
+  "completion": {
+    "canonical_source": "scripts/evaluation_lib.py",
+    "dispositions": [
+      "act",
+      "watch",
+      "no-action",
+      "blocked",
+      "done",
+      "kill",
+      "needs-human"
+    ],
+    "legacy_aliases": {
+      "merge": "done",
+      "defer": "watch",
+      "no-edge": "no-action"
+    },
+    "parked_dispositions": [
+      "watch",
+      "no-action"
+    ],
+    "parked_state_patterns": {
+      "state_change_or_trigger": "(?i)state.change|trigger",
+      "decay_or_review_date": "(?i)decay|review date"
+    }
   }
 }

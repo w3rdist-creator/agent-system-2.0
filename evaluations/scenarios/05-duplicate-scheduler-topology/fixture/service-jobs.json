@@ -1,1 +1,32 @@
-{"executor":"service","jobs":["digest","cleanup"]}
+{
+  "executor": "service-timer",
+  "owner": "platform-ops",
+  "authoritative_targets": [
+    "vault/index/notes.sqlite",
+    "vault/index/search.sqlite"
+  ],
+  "jobs": [
+    {
+      "id": "search-compaction",
+      "name": "search-compaction",
+      "cadence": "20 * * * *",
+      "target": "vault/index/search.sqlite",
+      "enabled": true
+    },
+    {
+      "id": "vault-refresh",
+      "name": "vault-refresh",
+      "cadence": "5 * * * *",
+      "source": "vault/notes/",
+      "target": "vault/index/notes.sqlite",
+      "enabled": true
+    },
+    {
+      "id": "service-heartbeat",
+      "name": "service-heartbeat",
+      "cadence": "*/5 * * * *",
+      "target": "var/health/service-timer.json",
+      "enabled": true
+    }
+  ]
+}

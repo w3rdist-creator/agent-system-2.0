@@ -60,9 +60,9 @@ Every unit of work ends with exactly one of these. They're how you scan agent ou
 | `done` | the requested outcome itself is verified complete |
 | `blocked` | a dependency, approval, or missing evidence prevents progress |
 | `needs-human` | a judgment or authority call is yours to make |
-| `no-action` | evidence says deliberately leave things unchanged |
+| `no-action` | after investigation, deliberately leave world state unchanged without rejecting a candidate |
 | `watch` | parked, with a named condition that reopens it |
-| `kill` | a proposal or mechanism was rejected or retired |
+| `kill` | reject or retire a proposal, candidate, or mechanism |
 
 Deprecated aliases in old ledgers: `merge` means `done`, `defer` means `watch`, and `no-edge` means `no-action`.
 
@@ -83,8 +83,8 @@ Keep each member's installed vault personal and unsynced. Add one shared vault, 
 ## Known boundaries (read before you judge it)
 
 1. **Team sync is contract-only.** The [shared-vault contract](docs/Team-Vault-Contract.md) defines topology, write authority, attribution, promotion, and conflict handling. Real-time sync, permissions enforcement, and automatic merge remain deliberately manual until one external team requests tooling or two maintainer production uses cannot be served cleanly by the contract.
-2. **Enforcement requires runner wiring.** Machine-checkable protected-write, credential-echo, and retrieval-cap rules ship as a pre-tool-use hook with a documented runner contract. A runner that never calls the hook gets no enforcement; judgment-level doctrine and authority boundaries remain advisory rather than a security layer. Keep real credentials out of anything an agent reads.
-3. **No upgrade automation yet.** Install and uninstall are tested and safe; upgrading in place is not built. For now: uninstall (it preserves everything you modified), reinstall, re-add packs.
+2. **Enforcement requires runner wiring.** Machine-checkable protected-write, credential-echo, and retrieval-cap rules ship as a pre-tool-use hook, paired with a completion hook that checks parked-state answer surfaces on the way out. A runner that never calls the hooks gets no enforcement; judgment-level doctrine and authority boundaries remain advisory rather than a security layer. Keep real credentials out of anything an agent reads.
+3. **Upgrade is manifest-scoped.** `scripts/upgrade.sh` safely migrates distribution-owned base files, preserving edits beside `.incoming` proposals. Packs already installed into the vault are user content and are not upgraded; use uninstall/reinstall if manifest migration cannot complete cleanly.
 4. **The eval certificate is narrow.** One model, one date, simulated tools, single-turn scenarios — all checked in under `evaluations/results/`. Run `scripts/recert.sh` for a current single-arm smoke result; it does not replace the paired three-trial/two-arm delta certificate.
 5. **Windows is untested.** POSIX path only (WSL2 inferred compatible, not CI-tested).
 6. **Empty registries are deliberate.** Four skill categories contain pointers instead of skills — that's declared deferred capability, not breakage.

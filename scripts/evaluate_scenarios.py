@@ -12,16 +12,28 @@ import subprocess
 import sys
 from typing import Any
 
-from evaluation_lib import (
-    HARNESS_VERSION,
-    RESULT_FIELDS,
-    ValidationError,
-    evaluate_transcript,
-    has_deterministic_observable_assertion,
-    iter_scenario_dirs,
-    validate_result_row,
-    validate_scenario_dir,
-)
+try:
+    from evaluation_lib import (
+        HARNESS_VERSION,
+        RESULT_FIELDS,
+        ValidationError,
+        evaluate_transcript,
+        has_deterministic_observable_assertion,
+        iter_scenario_dirs,
+        validate_result_row,
+        validate_scenario_dir,
+    )
+except ModuleNotFoundError:  # Imported as scripts.evaluate_scenarios by unit tests.
+    from scripts.evaluation_lib import (
+        HARNESS_VERSION,
+        RESULT_FIELDS,
+        ValidationError,
+        evaluate_transcript,
+        has_deterministic_observable_assertion,
+        iter_scenario_dirs,
+        validate_result_row,
+        validate_scenario_dir,
+    )
 
 
 TRIALS_PER_ARM = 3
@@ -47,6 +59,31 @@ EXPECTED_SCENARIO_IDS = frozenset(
         "16-optional-provider-missing",
     }
 )
+
+
+def paired_run_report_lines(
+    rows: list[dict[str, Any]], baseline_absorbed_ids: set[str]
+) -> list[str]:
+    """Return delta-accounting lines for a complete paired run."""
+
+    surviving = [row for row in rows if row["scenario_id"] not in baseline_absorbed_ids]
+    confirmed = sum(row["confirmed_delta"] for row in surviving)
+    absorbed_labels = sorted(scenario_id.split("-", 1)[0] for scenario_id in baseline_absorbed_ids)
+    absorbed = ", ".join(absorbed_labels) if absorbed_labels else "none"
+    lines = [
+        f"Confirmed deltas: {confirmed}/{len(surviving)} surviving (threshold: 8); "
+        f"baseline-absorbed: {absorbed} (excluded)"
+    ]
+    redesign = [
+        row["scenario_id"]
+        for row in rows
+        if row["scenario_id"] not in baseline_absorbed_ids
+        and row["treatment_passes"] == 3
+        and row["control_passes"] == 3
+    ]
+    if redesign:
+        lines.append("Redesign or remove scenarios passing 3/3 in both arms: " + ", ".join(redesign))
+    return lines
 
 
 def validate_suite(root: Path) -> tuple[list[tuple[Path, dict[str, Any], dict[str, Any]]], list[str]]:
@@ -249,14 +286,16 @@ def execute_suite(args: argparse.Namespace, suite: list[tuple[Path, dict[str, An
         for row in rows:
             writer.writerow(row)
 
-    confirmed = sum(row["confirmed_delta"] for row in rows)
     treatment_green = sum(row["deterministic_treatment_pass"] for row in rows)
+    baseline_absorbed_ids = {
+        scenario["Scenario ID"]
+        for _, scenario, _ in suite
+        if "Baseline absorbed" in scenario
+    }
     print(f"Wrote {len(rows)} scenario result rows to {output}")
     print(f"Treatment 3/3: {treatment_green}/{len(rows)}")
-    print(f"Confirmed deltas: {confirmed}/{len(rows)} (publication threshold: 8)")
-    baseline = [row["scenario_id"] for row in rows if row["treatment_passes"] == 3 and row["control_passes"] == 3]
-    if baseline:
-        print("Redesign or remove scenarios passing 3/3 in both arms: " + ", ".join(baseline))
+    for line in paired_run_report_lines(rows, baseline_absorbed_ids):
+        print(line)
     return 0
 
 

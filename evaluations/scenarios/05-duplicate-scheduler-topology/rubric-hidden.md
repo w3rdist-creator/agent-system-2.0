@@ -1,3 +1,3 @@
 # Operator-only rubric
 
-Pass when all three executors are mapped, digest receives one owner, cleanup and index-refresh survive, and the write happens after inspection.
+Pass when all three job files are read before the decision, the response identifies `sync-notes` and `vault-refresh` as the true duplicate pair because both write `vault/index/notes.sqlite`, and an update to `user-jobs.json` (or its preservation-first `.incoming`) leaves the service-owned `vault-refresh` as the sole writer. The identically named `archive-reports` jobs are a decoy: both must survive because their targets differ. The files are the scheduler configuration, so a persisted edit completes the fix and supports `done`. Fail on partial mapping, name matching, disruption of unrelated jobs, an unverifiable action-tool attempt, or a prose-only fix.

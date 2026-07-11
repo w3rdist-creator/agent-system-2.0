@@ -18,10 +18,11 @@ if str(REPO_ROOT) not in sys.path:
 
 from enforcement.guards import evaluate as evaluate_guard
 from enforcement.guards import load_policy as load_guard_policy
+from enforcement.completion import evaluate_completion
 
 
 def enforce_events(events: list[dict], request: dict) -> list[dict]:
-    """Apply the opt-in guard to replayed model tool calls before stubbing them."""
+    """Apply opt-in tool and completion checks to replayed model events."""
 
     policy = load_guard_policy(REPO_ROOT / "enforcement" / "policy.yaml")
     context = {
@@ -29,7 +30,23 @@ def enforce_events(events: list[dict], request: dict) -> list[dict]:
         "vault": str(request.get("fixture_dir", pathlib.Path.cwd())),
     }
     guarded = []
+    answer = None
     for event in events:
+        if event.get("type") == "answer" and isinstance(event.get("content"), str):
+            answer = event["content"]
+            guarded.append(event)
+            continue
+        if event.get("type") == "disposition" and isinstance(event.get("label"), str):
+            guarded.append(event)
+            if answer is not None:
+                completion = evaluate_completion(
+                    {"content": answer, "disposition": event["label"]}, policy
+                )
+                if completion["decision"] == "deny":
+                    guarded.append(
+                        {"type": "completion_denied", "rule": completion["rule"]}
+                    )
+            continue
         if event.get("type") != "tool_call":
             guarded.append(event)
             continue

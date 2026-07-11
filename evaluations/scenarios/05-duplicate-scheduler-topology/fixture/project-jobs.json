@@ -1,1 +1,27 @@
-{"executor":"project-hook","jobs":["index-refresh"]}
+{
+  "executor": "project-scheduler",
+  "owner": "project-maintainers",
+  "jobs": [
+    {
+      "id": "project-archive-reports",
+      "name": "archive-reports",
+      "cadence": "0 2 * * *",
+      "target": "artifacts/project-reports.tar.zst",
+      "enabled": true
+    },
+    {
+      "id": "dependency-scan",
+      "name": "dependency-scan",
+      "cadence": "15 4 * * 1",
+      "target": "artifacts/dependency-scan.json",
+      "enabled": true
+    },
+    {
+      "id": "preview-cleanup",
+      "name": "preview-cleanup",
+      "cadence": "30 3 * * *",
+      "target": "var/preview-cache/",
+      "enabled": true
+    }
+  ]
+}

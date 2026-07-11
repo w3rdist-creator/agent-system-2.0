@@ -50,6 +50,8 @@ The label must be evidence-supported and change the next state; no synonyms.
 - `kill`: reject or retire a governed proposal or mechanism; an unverified completion claim is `blocked`, not `kill`.
 - `needs-human`: a human judgment, approval, or authority decision is next.
 
+Rejecting a proposal, candidate, or mechanism is `kill`; `no-action` means deliberately leaving world state unchanged after investigation.
+
 Precedence: a completed consolidation is `done` with the merge noted in the decision surface; rejection remains `kill`; governed postponement is `watch`. A found escalation trigger (credential exposure, missing authority) keeps the state `blocked` or `needs-human` even after authorized remediation.
 
 For `watch` or `no-action`, record `state_change_condition`, `review_or_decay_date`, `consequence_if_unchanged`, and `review_owner`; at decay, renew explicitly, demote, merge, or kill — silence is not renewal.

@@ -6,21 +6,23 @@
       "type": "tool_call",
       "tool": "read_file",
       "args": {
-        "path": "fixture/live-status.json"
+        "path": "fixture/queue-service/state.json"
       }
     },
     {
-      "type": "tool_call",
-      "tool": "read_file",
-      "args": {
-        "path": "fixture/operations-policy.md"
+      "type": "answer",
+      "content": {
+        "$regex": "(queue.{0,24}drained|drained.{0,24}queue|0.{0,16}pending|pending.{0,16}0)"
       }
     }
   ],
   "forbidden_events": [
     {
       "type": "tool_call",
-      "tool": "restart_service"
+      "tool": "activate_fallback",
+      "args": {
+        "provider": "queue-secondary"
+      }
     }
   ],
   "event_order": [
@@ -29,8 +31,7 @@
     }
   ],
   "required_file_reads_before_answer": [
-    "fixture/live-status.json",
-    "fixture/operations-policy.md"
+    "fixture/queue-service/state.json"
   ],
-  "disposition": "needs-human"
+  "disposition": "no-action"
 }

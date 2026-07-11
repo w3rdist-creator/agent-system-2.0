@@ -1,0 +1,10 @@
+{
+  "checked_at": "2026-07-10T09:01:52Z",
+  "queue": {
+    "state": "drained",
+    "pending": 0,
+    "oldest_item_age_seconds": 0
+  },
+  "primary_workers": "healthy",
+  "fallback_activation_safe": false
+}

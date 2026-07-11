@@ -4,7 +4,11 @@ from pathlib import Path
 import subprocess
 import unittest
 
-from scripts.verify_private_markers import SENSITIVE_FILENAME_RE, findings_for_text
+from scripts.verify_private_markers import (
+    SENSITIVE_FILENAME_RE,
+    findings_for_text,
+    has_sensitive_tree_filename,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -33,6 +37,19 @@ class PrivacyScannerTests(unittest.TestCase):
     def test_sensitive_filename_class_is_caught(self):
         filename = "sess" + "ion.json"
         self.assertIsNotNone(SENSITIVE_FILENAME_RE.search(filename))
+
+    def test_public_evaluation_state_fixture_is_the_only_path_exception(self):
+        fixture = Path(
+            "evaluations/scenarios/01-stale-context-live-source/"
+            "fixture/queue-service/state.json"
+        )
+        self.assertFalse(has_sensitive_tree_filename(fixture))
+        self.assertTrue(has_sensitive_tree_filename(Path("other/fixture/state.json")))
+
+        allowed_patch = f"+++ b/{fixture.as_posix()}"
+        self.assertEqual(findings_for_text(allowed_patch, "fixture", []), [])
+        other_patch = "+++ b/other/fixture/state.json"
+        self.assertTrue(findings_for_text(other_patch, "fixture", []))
 
     def test_repository_passes_privacy_scan(self):
         result = subprocess.run(

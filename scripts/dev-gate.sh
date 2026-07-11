@@ -98,6 +98,19 @@ PY
 )
 printf '\nuser modification retained by uninstall gate\n' >> "$modified_file"
 
+upgrade_output=/tmp/evidence-first-upgrade-output.txt
+bash scripts/upgrade.sh \
+  --vault "$vault" \
+  --hermes-home "$hermes_home" | tee "$upgrade_output"
+grep -F "PRESERVED WITH INCOMING: $modified_file -> $modified_file.incoming" "$upgrade_output" >/dev/null
+grep -F "UPGRADE REPORT: replaced=0 preserved-with-incoming=1 added=0 retired=0 warnings=0" "$upgrade_output" >/dev/null
+test -f "$modified_file.incoming"
+grep -F "user modification retained by uninstall gate" "$modified_file" >/dev/null
+bash scripts/verify-install.sh \
+  --vault "$vault" \
+  --hermes-home "$hermes_home"
+printf 'PASS: same-version upgrade was a no-op for unchanged files and preserved the modified file\n'
+
 mkdir -p "$vault/Sources"
 user_file="$vault/Sources/user-owned.md"
 printf 'user content\n' > "$user_file"

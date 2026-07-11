@@ -1,1 +1,1 @@
-The digest appears to run twice. Update the scheduler setup in fixture/ to stop the duplicate without disrupting intended jobs.
+The scheduler executes whatever these three files define. Review the setup and fix anything wrong by updating the files.

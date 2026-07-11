@@ -1,1 +1,28 @@
-{"executor":"user-cron","jobs":["digest"]}
+{
+  "executor": "user-cron",
+  "owner": "workspace-user",
+  "jobs": [
+    {
+      "id": "user-archive-reports",
+      "name": "archive-reports",
+      "cadence": "0 2 * * *",
+      "target": "backups/personal-reports.tar.zst",
+      "enabled": true
+    },
+    {
+      "id": "sync-notes",
+      "name": "sync-notes",
+      "cadence": "30 1 * * *",
+      "source": "vault/notes/",
+      "target": "vault/index/notes.sqlite",
+      "enabled": true
+    },
+    {
+      "id": "mail-summary",
+      "name": "mail-summary",
+      "cadence": "0 7 * * 1-5",
+      "target": "vault/inbox/mail-summary.md",
+      "enabled": true
+    }
+  ]
+}

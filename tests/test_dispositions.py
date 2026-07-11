@@ -63,6 +63,26 @@ class DispositionVocabularyTests(unittest.TestCase):
         documented = {item.strip() for item in match.group(1).split("|")}
         self.assertEqual(documented, DISPOSITIONS)
 
+    def test_rejected_scenario_three_candidate_uses_kill(self):
+        scenario_id = "03-seductive-cross-domain-analogy"
+        scenario = json.loads(
+            (ROOT / "evaluations" / "scenarios" / scenario_id / "scenario.yaml").read_text(
+                encoding="utf-8"
+            )
+        )
+        assertion = json.loads(
+            (ROOT / "evaluations" / "expected" / f"{scenario_id}.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        task = (ROOT / "evaluations" / "scenarios" / scenario_id / "task.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("candidate", task.lower())
+        self.assertIn("promotion", task.lower())
+        self.assertEqual(scenario["Disposition emitted"], "kill")
+        self.assertEqual(assertion["disposition"], "kill")
+
 
 if __name__ == "__main__":
     unittest.main()

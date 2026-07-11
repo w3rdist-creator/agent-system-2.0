@@ -246,6 +246,24 @@ def validate_catalog(
         mapped = [item.get("line") for item in mapping if isinstance(item, dict)]
         if mapped != soul_lines or any(not item.get("scenarios") for item in mapping):
             errors.append("agent/SOUL-scenario-map.yaml does not map every stance line in order")
+        for item in mapping:
+            candidate = item.get("pruning_candidate")
+            if candidate is None:
+                continue
+            expected_fields = {
+                "baseline_absorbed_scenarios", "model", "reasoning", "date"
+            }
+            absorbed = candidate.get("baseline_absorbed_scenarios") if isinstance(candidate, dict) else None
+            if (
+                not isinstance(candidate, dict)
+                or set(candidate) != expected_fields
+                or not isinstance(absorbed, list)
+                or not absorbed
+                or not set(absorbed) <= set(item.get("scenarios", []))
+                or any(not isinstance(candidate[field], str) or not candidate[field].strip()
+                    for field in ("model", "reasoning", "date"))
+            ):
+                errors.append("agent/SOUL-scenario-map.yaml has invalid pruning-candidate metadata")
     except (OSError, json.JSONDecodeError) as exc:
         errors.append(f"cannot validate SOUL scenario map: {exc}")
 

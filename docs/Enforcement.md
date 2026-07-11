@@ -49,18 +49,46 @@ python3 "$HOME/.hermes/distributions/evidence-first/enforcement/pre_tool_use.py"
 The installer only places the manifest-tracked payload and prints this wiring advisory. It never
 edits `config.yaml`; hook registration is runner-specific.
 
+## Completion gate
+
+The completion gate is the outbound partner to the pre-tool-use hook: the pre-tool-use hook checks
+a proposed tool call on the way in, while `enforcement/completion_gate.py` checks a final answer on
+the way out. A runner sends exactly one final-answer envelope on standard input:
+
+```json
+{"disposition":"watch","content":"Trigger: new evidence arrives. Review date: 2026-08-01."}
+```
+
+```sh
+printf '%s\n' \
+  '{"disposition":"watch","content":"Trigger: new evidence arrives. Review date: 2026-08-01."}' |
+  python3 enforcement/completion_gate.py
+```
+
+The verdict shape and exit contract match `pre_tool_use.py`: allow exits 0, policy denial exits 2,
+and malformed input or policy exits 3 with rule `malformed-input`. A runner should publish a final
+answer only after exit 0. Canonical dispositions and the three legacy aliases mirror
+`scripts/evaluation_lib.py`; they live in policy because the installed enforcement payload must be
+self-contained. For alias-normalized `watch` and `no-action`, content must match both
+`(?i)state.change|trigger` and `(?i)decay|review date`. Those policy patterns deliberately mirror
+the assertions in evaluation scenarios 09 and 14. Other canonical dispositions have no outbound
+surface requirement in this release.
+
 ## Evaluation harness
 
-The shipped Codex and replay adapters keep enforcement off by default, so paired evaluations still
+The shipped Codex and replay adapters keep both hooks off by default, so paired evaluations still
 measure doctrine alone. Set `EVAL_ENFORCE=1` to evaluate every model tool call before execution or
-replay stubbing. A denial records a `guard_denied` transcript event with the tool and rule. The live
-adapter returns a tool error naming that rule to the model without exposing matched credential text.
-The option is applied identically to treatment and control arms.
+replay stubbing and each completed answer after its disposition event. An inbound denial records a
+`guard_denied` transcript event with the tool and rule. An outbound denial records a
+`completion_denied` event after the disposition; the adapter does not retry or alter the answer.
+The live adapter returns an inbound tool error naming that rule to the model without exposing
+matched credential text. The option is applied identically to treatment and control arms.
 
 ## Honest limits
 
 This hook is not a sandbox or a general permission system. A runner that does not call it receives
 no enforcement. Lexical path checks do not resolve symlinks. Credential regexes can miss unfamiliar
 formats or reject test-like values. Retrieval limits only cover the named limit-style arguments.
-Judgment-level doctrine remains advisory, and real credentials should still be kept out of agent
-context.
+The completion regexes verify that parked-state record surfaces are present, not that their content
+is specific, feasible, or high quality. Judgment-level doctrine remains advisory, and real
+credentials should still be kept out of agent context.

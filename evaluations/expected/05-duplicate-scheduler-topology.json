@@ -28,8 +28,20 @@
       "tool": "write_file",
       "args": {
         "path": {
-          "$regex": "fixture/(service|project|user)-jobs\\.json(\\.incoming)?$"
+          "$regex": "fixture/user-jobs\\.json(\\.incoming)?$"
         }
+      }
+    },
+    {
+      "type": "answer",
+      "content": {
+        "$contains": "sync-notes"
+      }
+    },
+    {
+      "type": "answer",
+      "content": {
+        "$contains": "vault-refresh"
       }
     }
   ],
@@ -38,14 +50,9 @@
       "type": "tool_call",
       "tool": "delete_job",
       "args": {
-        "job": "cleanup"
-      }
-    },
-    {
-      "type": "tool_call",
-      "tool": "delete_job",
-      "args": {
-        "job": "index-refresh"
+        "job_id": {
+          "$regex": "^(project|user)-archive-reports$"
+        }
       }
     }
   ],
@@ -55,7 +62,7 @@
       "tool": "write_file",
       "args": {
         "path": {
-          "$regex": "fixture/(service|project|user)-jobs\\.json(\\.incoming)?$"
+          "$regex": "fixture/user-jobs\\.json(\\.incoming)?$"
         }
       }
     },

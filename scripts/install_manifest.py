@@ -13,6 +13,8 @@ import sys
 
 
 MANIFEST_RELATIVE = Path(".evidence-first/install-manifest.json")
+MANIFEST_SCHEMA_VERSION = 2
+SUPPORTED_MANIFEST_SCHEMAS = {1, MANIFEST_SCHEMA_VERSION}
 
 
 class InstallError(RuntimeError):
@@ -43,7 +45,10 @@ def read_manifest(vault: Path) -> tuple[Path, dict[str, object]]:
         raise InstallError(f"install manifest not found: {path}") from exc
     except json.JSONDecodeError as exc:
         raise InstallError(f"invalid install manifest {path}: {exc}") from exc
-    if data.get("manifest_schema_version") != 1 or not isinstance(data.get("files"), list):
+    if (
+        data.get("manifest_schema_version") not in SUPPORTED_MANIFEST_SCHEMAS
+        or not isinstance(data.get("files"), list)
+    ):
         raise InstallError(f"unsupported or malformed install manifest: {path}")
     return path, data
 
@@ -222,7 +227,7 @@ def install(args: argparse.Namespace) -> int:
     for source, relative, component in source_files(root):
         entries.append(copy_owned(source, destination_for(relative, vault, distribution), component))
     data: dict[str, object] = {
-        "manifest_schema_version": 1,
+        "manifest_schema_version": MANIFEST_SCHEMA_VERSION,
         "strategy": "reference-first",
         "hermes_compatibility": "0.18.x",
         "hermes_home": str(hermes_home),
@@ -236,6 +241,194 @@ def install(args: argparse.Namespace) -> int:
     write_manifest(path, data)
     print(f"INSTALLED: {len(entries)} owned files")
     print(f"MANIFEST: {path}")
+    return 0
+
+
+def logical_installed_path(entry: dict[str, object]) -> Path:
+    path = Path(str(entry["path"]))
+    if entry.get("original_state") == "preexisting" and path.name.endswith(".incoming"):
+        return path.with_name(path.name[: -len(".incoming")])
+    return path
+
+
+def upgrade(args: argparse.Namespace) -> int:
+    root = absolute(args.root)
+    vault = absolute(args.vault)
+    requested_home = absolute(args.hermes_home)
+    manifest_file, data = read_manifest(vault)
+    if data.get("hermes_home") != str(requested_home):
+        raise InstallError("refusing upgrade: --hermes-home does not match the install manifest")
+
+    distribution = requested_home / "distributions" / "evidence-first"
+    files = data.get("files")
+    if not isinstance(files, list):
+        raise InstallError("install manifest files must be a list")
+
+    managed: dict[Path, dict[str, object]] = {}
+    pack_entries: list[dict[str, object]] = []
+    for raw in files:
+        if not isinstance(raw, dict) or not isinstance(raw.get("path"), str):
+            raise InstallError("malformed manifest file entry; refusing partial upgrade")
+        component = raw.get("component")
+        if isinstance(component, str) and component.startswith("pack:"):
+            pack_entries.append(raw)
+            continue
+        logical = logical_installed_path(raw)
+        if logical in managed:
+            raise InstallError(f"duplicate logical path in install manifest: {logical}")
+        managed[logical] = raw
+
+    actions: list[dict[str, object]] = []
+    new_entries: list[dict[str, object]] = []
+    matched: set[Path] = set()
+    counts = {"replaced": 0, "preserved": 0, "added": 0, "retired": 0, "warnings": 0}
+
+    for source, relative, component in source_files(root):
+        target = destination_for(relative, vault, distribution)
+        source_hash = sha256(source)
+        old = managed.get(target)
+        if old is None:
+            actual, state = proposed_destination(target)
+            entry = {
+                "path": str(actual),
+                "original_state": state,
+                "sha256": source_hash,
+                "component": component,
+            }
+            actions.append({"kind": "added", "source": source, "path": actual})
+            new_entries.append(entry)
+            counts["added"] += 1
+            continue
+
+        matched.add(target)
+        installed = Path(str(old["path"]))
+        if not (within(installed, vault) or within(installed, distribution)):
+            raise InstallError(f"out-of-scope manifest path; refusing upgrade: {installed}")
+        old_hash = old.get("sha256")
+        marked_modified = "superseded_by_incoming" in old
+        if installed.is_file() and sha256(installed) == old_hash and not marked_modified:
+            if source_hash == old_hash:
+                actions.append({"kind": "unchanged", "path": installed})
+            else:
+                actions.append({"kind": "replaced", "source": source, "path": installed})
+                counts["replaced"] += 1
+            entry = dict(old)
+            entry["sha256"] = source_hash
+            entry["component"] = component
+            entry.pop("superseded_by_incoming", None)
+            new_entries.append(entry)
+            continue
+
+        if installed.is_file():
+            incoming = installed.with_name(installed.name + ".incoming")
+            if incoming.exists():
+                if not incoming.is_file() or sha256(incoming) != source_hash:
+                    raise InstallError(
+                        f"conflict proposal already exists; refusing to overwrite: {incoming}"
+                    )
+                write_incoming = False
+            else:
+                write_incoming = True
+            current_hash = sha256(installed)
+            entry = dict(old)
+            entry["sha256"] = current_hash
+            entry["component"] = component
+            entry["superseded_by_incoming"] = str(incoming)
+            actions.append(
+                {
+                    "kind": "preserved",
+                    "source": source,
+                    "path": installed,
+                    "incoming": incoming,
+                    "write": write_incoming,
+                }
+            )
+            new_entries.append(entry)
+            counts["preserved"] += 1
+            continue
+
+        actual, state = proposed_destination(target)
+        entry = {
+            "path": str(actual),
+            "original_state": state,
+            "sha256": source_hash,
+            "component": component,
+        }
+        actions.append({"kind": "added", "source": source, "path": actual})
+        new_entries.append(entry)
+        counts["added"] += 1
+        counts["warnings"] += 1
+        actions.append({"kind": "warning", "message": f"previously installed file was absent: {installed}"})
+
+    for logical, old in managed.items():
+        if logical in matched:
+            continue
+        installed = Path(str(old["path"]))
+        if not (within(installed, vault) or within(installed, distribution)):
+            raise InstallError(f"out-of-scope retired manifest path; refusing upgrade: {installed}")
+        if installed.is_file() and sha256(installed) == old.get("sha256") and "superseded_by_incoming" not in old:
+            actions.append({"kind": "retired", "path": installed})
+            counts["retired"] += 1
+        elif installed.exists():
+            actions.append(
+                {
+                    "kind": "warning",
+                    "message": f"retired modified file preserved and no longer tracked: {installed}",
+                }
+            )
+            counts["warnings"] += 1
+        else:
+            actions.append(
+                {
+                    "kind": "warning",
+                    "message": f"retired file was already absent and is no longer tracked: {installed}",
+                }
+            )
+            counts["warnings"] += 1
+
+    if args.dry_run:
+        for action in actions:
+            kind = str(action["kind"])
+            if kind == "preserved":
+                print(f"PLAN preserved-with-incoming: {action['path']} -> {action['incoming']}")
+            elif kind == "warning":
+                print(f"PLAN warning: {action['message']}")
+            else:
+                print(f"PLAN {kind}: {action['path']}")
+        print(f"PLAN manifest: {manifest_file} (schema {MANIFEST_SCHEMA_VERSION})")
+    else:
+        parents: set[Path] = set()
+        for action in actions:
+            kind = str(action["kind"])
+            if kind in {"replaced", "added"}:
+                destination = Path(str(action["path"]))
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(Path(str(action["source"])), destination)
+                print(f"{kind.upper()}: {destination}")
+            elif kind == "preserved":
+                incoming = Path(str(action["incoming"]))
+                if action["write"]:
+                    incoming.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copyfile(Path(str(action["source"])), incoming)
+                print(f"PRESERVED WITH INCOMING: {action['path']} -> {incoming}")
+            elif kind == "retired":
+                retired = Path(str(action["path"]))
+                retired.unlink()
+                parents.add(retired.parent)
+                print(f"RETIRED: {retired}")
+            elif kind == "warning":
+                print(f"WARNING: {action['message']}")
+        remove_empty_parents(parents, (vault, distribution))
+        data["manifest_schema_version"] = MANIFEST_SCHEMA_VERSION
+        data["files"] = new_entries + pack_entries
+        write_manifest(manifest_file, data)
+
+    print(
+        "UPGRADE REPORT: "
+        f"replaced={counts['replaced']} "
+        f"preserved-with-incoming={counts['preserved']} "
+        f"added={counts['added']} retired={counts['retired']} warnings={counts['warnings']}"
+    )
     return 0
 
 
@@ -409,7 +602,11 @@ def uninstall(args: argparse.Namespace) -> int:
             print(f"WARNED: already absent: {path}")
             warned += 1
             continue
-        if not path.is_file() or sha256(path) != raw.get("sha256"):
+        if (
+            not path.is_file()
+            or sha256(path) != raw.get("sha256")
+            or "superseded_by_incoming" in raw
+        ):
             print(f"WARNING: modified distribution-owned file preserved: {path}")
             warned += 1
             preserved += 1
@@ -464,6 +661,13 @@ def build_parser() -> argparse.ArgumentParser:
     pack.add_argument("--root", required=True)
     pack.add_argument("--vault", required=True)
     pack.set_defaults(func=install_pack)
+
+    migrate = subparsers.add_parser("upgrade")
+    migrate.add_argument("--root", required=True)
+    migrate.add_argument("--vault", required=True)
+    migrate.add_argument("--hermes-home", required=True)
+    migrate.add_argument("--dry-run", action="store_true")
+    migrate.set_defaults(func=upgrade)
 
     check = subparsers.add_parser("verify")
     check.add_argument("--vault", required=True)

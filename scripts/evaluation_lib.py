@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+from datetime import date
 from pathlib import Path
 import re
 from typing import Any, Iterable, Mapping
@@ -52,8 +53,10 @@ SCENARIO_FIELDS = (
     "Treatment result",
     "Control result",
     "Measured delta",
+    "Baseline absorbed",
 )
 
+OPTIONAL_SCENARIO_FIELDS = frozenset({"Baseline absorbed"})
 EMPTY_RESULT_FIELDS = ("Treatment result", "Control result", "Measured delta")
 
 RESULT_FIELDS = (
@@ -119,13 +122,19 @@ def validate_scenario_dir(scenario_dir: Path) -> tuple[dict[str, Any], dict[str,
     if not isinstance(scenario, dict):
         raise ValidationError(f"{scenario_path}: top level must be an object")
 
-    missing = [field for field in SCENARIO_FIELDS if field not in scenario]
+    missing = [
+        field
+        for field in SCENARIO_FIELDS
+        if field not in OPTIONAL_SCENARIO_FIELDS and field not in scenario
+    ]
     extra = sorted(set(scenario) - set(SCENARIO_FIELDS))
     if missing:
         errors.append(f"missing schema fields: {', '.join(missing)}")
     if extra:
         errors.append(f"unknown schema fields: {', '.join(extra)}")
     for field in SCENARIO_FIELDS:
+        if field in OPTIONAL_SCENARIO_FIELDS:
+            continue
         if field in EMPTY_RESULT_FIELDS:
             if field in scenario and scenario[field] not in ("", None):
                 errors.append(f"{field} must be empty before results are recorded")
@@ -156,6 +165,31 @@ def validate_scenario_dir(scenario_dir: Path) -> tuple[dict[str, Any], dict[str,
     for field in ("Treatment loading", "Control loading"):
         if field in scenario and not isinstance(scenario[field], list):
             errors.append(f"{field} must be a list")
+
+    if "Baseline absorbed" in scenario:
+        baseline_absorbed = scenario["Baseline absorbed"]
+        expected_fields = {"model", "reasoning", "date", "rounds"}
+        if not isinstance(baseline_absorbed, dict):
+            errors.append("Baseline absorbed must be an object")
+        elif set(baseline_absorbed) != expected_fields:
+            errors.append(
+                "Baseline absorbed fields must be exactly: date, model, reasoning, rounds"
+            )
+        else:
+            for field in ("model", "reasoning"):
+                if not isinstance(baseline_absorbed[field], str) or not baseline_absorbed[field].strip():
+                    errors.append(f"Baseline absorbed {field} must be a non-empty string")
+            absorbed_date = baseline_absorbed["date"]
+            try:
+                parsed_date = date.fromisoformat(absorbed_date)
+            except (TypeError, ValueError):
+                errors.append("Baseline absorbed date must be an ISO YYYY-MM-DD date")
+            else:
+                if parsed_date.isoformat() != absorbed_date:
+                    errors.append("Baseline absorbed date must be an ISO YYYY-MM-DD date")
+            rounds = baseline_absorbed["rounds"]
+            if isinstance(rounds, bool) or not isinstance(rounds, int) or rounds < 1:
+                errors.append("Baseline absorbed rounds must be a positive integer")
 
     expected_path = scenario_dir.parents[1] / "expected" / f"{scenario_dir.name}.json"
     if not expected_path.is_file():

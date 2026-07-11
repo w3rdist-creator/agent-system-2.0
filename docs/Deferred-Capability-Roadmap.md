@@ -30,7 +30,7 @@ These operator-directed additions were admitted on 2026-07-10 and shipped in Rel
 | MCP/plugin activation recipes | 1.1+ | Verified integration demand | Can version, secret, and authority boundaries be tested? |
 | Cron/watchdog/control tower | 1.1+ | Repeated scheduling need beyond the shipped operator recipes | Still deferred: 1.1 documents cron recipes for metabolism and recert but installs no scheduler. Is there one scheduler owner, positive heartbeat, and usefulness evidence? |
 | Team vault sync/permissions/merge tooling | 1.2+ | One external team request or two maintainer production uses not served by the 1.1 contract | Can tooling enforce the contract without owning user content or inventing a second merge authority? |
-| Backup/restore/upgrade tooling | After 1.0 exists | First real upgrade need | Can manifest migration avoid owning upstream or user state? |
+| Backup/restore/upgrade tooling | Upgrade shipped in 1.2; backup/restore remains deferred | Trigger fired by the 1.1 release's first real upgrade need | Upgrade now uses manifest migration without owning upstream, pack, or user state; what evidence should trigger backup/restore? |
 | VPS/local-LLM/hybrid/satellite | 1.1+ | Real deployment request | Is the topology available for repeatable tests? |
 | Hosted UI | Separate project | Explicit product decision | Why should it enter the core distribution? |
 | Non-Hermes compatibility | Later | Maintainer plus user demand | Can platform-neutrality become a tested claim? |

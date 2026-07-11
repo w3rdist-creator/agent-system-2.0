@@ -60,6 +60,16 @@ CONTENT_PATTERNS = (
 SENSITIVE_FILENAME_RE = re.compile(
     r"^(?:session|sessions|state|auth|credentials?)(?:$|[._-])", re.I
 )
+PUBLIC_SENSITIVE_FIXTURE_PATHS = {
+    "evaluations/scenarios/01-stale-context-live-source/fixture/queue-service/state.json",
+}
+
+
+def has_sensitive_tree_filename(relative: Path) -> bool:
+    return (
+        relative.as_posix() not in PUBLIC_SENSITIVE_FIXTURE_PATHS
+        and SENSITIVE_FILENAME_RE.search(relative.name) is not None
+    )
 
 
 def iter_tree_files(root: Path) -> Iterable[Path]:
@@ -97,6 +107,10 @@ def findings_for_text(text: str, source: str, denylist: list[str]) -> list[str]:
     for label, pattern in CONTENT_PATTERNS:
         for match in pattern.finditer(scrubbed):
             if label == "absolute personal path" and match.group("user") in GENERIC_USER_SEGMENTS:
+                continue
+            if label == "session/state/auth filename in patch stream" and any(
+                path in match.group(0) for path in PUBLIC_SENSITIVE_FIXTURE_PATHS
+            ):
                 continue
             line = scrubbed.count("\n", 0, match.start()) + 1
             findings.append(f"{source}:{line}: {label}")
@@ -138,7 +152,7 @@ def main() -> int:
         root = args.root.resolve()
         for path in iter_tree_files(root):
             relative = path.relative_to(root)
-            if SENSITIVE_FILENAME_RE.search(path.name):
+            if has_sensitive_tree_filename(relative):
                 findings.append(f"{relative}: sensitive session/state/auth filename")
             try:
                 text = path.read_text(encoding="utf-8")

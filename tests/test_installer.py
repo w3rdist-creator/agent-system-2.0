@@ -56,7 +56,7 @@ class InstallerTests(Phase6ScriptTestCase):
     def test_manifest_has_schema_hashes_states_and_components(self):
         self.install()
         manifest = self.manifest()
-        self.assertEqual(manifest["manifest_schema_version"], 1)
+        self.assertEqual(manifest["manifest_schema_version"], 2)
         self.assertEqual(manifest["strategy"], "reference-first")
         self.assertEqual(manifest["hermes_compatibility"], "0.18.x")
         self.assertEqual(manifest["external_dirs_index"], 1)

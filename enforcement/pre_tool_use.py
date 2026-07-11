@@ -8,6 +8,8 @@ import json
 from pathlib import Path
 import sys
 
+sys.dont_write_bytecode = True
+
 try:
     from .guards import evaluate, load_policy
 except ImportError:  # Direct invocation: python3 enforcement/pre_tool_use.py

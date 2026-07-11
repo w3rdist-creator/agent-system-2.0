@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import json
 from pathlib import Path
 import subprocess
@@ -106,6 +107,34 @@ class EnforcementTests(Phase6ScriptTestCase):
         self.assertEqual(malformed.returncode, 3, malformed.stderr)
         self.assertEqual(json.loads(malformed.stdout)["rule"], "malformed-input")
 
+    def test_installed_clis_disable_bytecode_before_sibling_imports(self):
+        for name in ("pre_tool_use.py", "completion_gate.py"):
+            with self.subTest(name=name):
+                tree = ast.parse((ROOT / "enforcement" / name).read_text(encoding="utf-8"))
+                assignments = [
+                    node
+                    for node in ast.walk(tree)
+                    if isinstance(node, ast.Assign)
+                    and any(
+                        isinstance(target, ast.Attribute)
+                        and isinstance(target.value, ast.Name)
+                        and target.value.id == "sys"
+                        and target.attr == "dont_write_bytecode"
+                        for target in node.targets
+                    )
+                    and isinstance(node.value, ast.Constant)
+                    and node.value.value is True
+                ]
+                sibling_imports = [
+                    node
+                    for node in ast.walk(tree)
+                    if isinstance(node, ast.ImportFrom)
+                    and node.module in {"completion", "guards"}
+                ]
+                self.assertEqual(len(assignments), 1)
+                self.assertTrue(sibling_imports)
+                self.assertLess(assignments[0].lineno, min(node.lineno for node in sibling_imports))
+
     def test_guard_denied_event_is_schema_compatible(self):
         events = normalize_transcript(
             {"events": [{"type": "guard_denied", "tool": "write_file", "rule": "protected-path-write"}]}
@@ -184,10 +213,14 @@ class EnforcementTests(Phase6ScriptTestCase):
             cwd=ROOT,
         )
         self.assertEqual(completion.returncode, 0, completion.stderr)
-        self.run_script(
+        bytecode = installed / "__pycache__" / "completion.cpython-39.pyc"
+        bytecode.parent.mkdir()
+        bytecode.write_bytes(b"dummy bytecode")
+        result = self.run_script(
             "uninstall.sh", "--vault", self.vault, "--hermes-home", self.hermes_home
         )
         self.assertFalse(installed.exists())
+        self.assertNotIn(str(bytecode), result.stdout)
 
     def test_uninstall_preserves_modified_enforcement_file(self):
         self.install()

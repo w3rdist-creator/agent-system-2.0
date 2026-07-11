@@ -61,6 +61,16 @@ class UpgradeTests(Phase6ScriptTestCase):
         modified = self.hermes_home / "distributions" / "evidence-first" / "agent" / "SOUL.md"
         user_content = modified.read_bytes() + b"\nuser modification\n"
         modified.write_bytes(user_content)
+        bytecode = (
+            self.hermes_home
+            / "distributions"
+            / "evidence-first"
+            / "enforcement"
+            / "__pycache__"
+            / "completion.cpython-39.pyc"
+        )
+        bytecode.parent.mkdir()
+        bytecode.write_bytes(b"dummy bytecode")
         config = self.hermes_home / "config.yaml"
         config_before = config.read_bytes()
 
@@ -88,6 +98,7 @@ class UpgradeTests(Phase6ScriptTestCase):
         )
         self.assertIn("preserved-with-incoming=1", result.stdout)
         self.assertIn("CONFIG: unchanged", result.stdout)
+        self.assertFalse(bytecode.exists())
         self.assertEqual(modified.read_bytes(), user_content)
         self.assertEqual(
             modified.with_name("SOUL.md.incoming").read_bytes(),

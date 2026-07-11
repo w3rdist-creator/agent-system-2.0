@@ -16,7 +16,7 @@ The distribution adds evidence-first operating material to Hermes without becomi
 
 The reference-first installer supports Hermes v0.18.x and writes distribution artifacts below `~/.hermes/distributions/evidence-first/`. It never edits `config.yaml`: Hermes v0.18.x `config set` assigns list indices in place and cannot append to `skills.external_dirs` (verified against the real CLI during the 2026-07-10 non-builder clean-room install), so the installer prints the exact one-line addition as an operator step and `verify-install.sh` fails closed until that entry exists. Vault files are installed relative to an explicit `--vault` path. The manifest records schema version, path, component, original state, and installed hash.
 
-Conflicts become `.incoming` files. Uninstall removes only unchanged owned files and then empty directories, non-recursively. Modified owned files, user files, and upstream Hermes files remain. The config entry is a printed manual removal because safe list-entry deletion was not proven for the supported upstream surface; install and uninstall are now symmetric on this point.
+Conflicts become `.incoming` files. Uninstall removes unchanged owned files, discards Python-generated `__pycache__` directories and `.pyc` files only inside the distribution-owned root, and then removes empty directories non-recursively. Modified owned files, user files, vault bytecode-like paths, and upstream Hermes files remain. The config entry is a printed manual removal because safe list-entry deletion was not proven for the supported upstream surface; install and uninstall are now symmetric on this point.
 
 ## Packs
 
@@ -41,4 +41,3 @@ The physical 16-layer layout is `Home.md`, `Vault Self-Model.md`, Raw, Inbox, Cl
 Context Spine is Contract only in 1.0. It is a future off-by-default retrieval substrate; Deep Timeline is its temporal subcorpus and Adversarial Canon is its challenge layer. No corpus payload or wholesale startup injection ships.
 
 A future request must declare purpose, namespaces, query, numeric `max_items`, token/context budget, minimum authority, freshness need, and adversarial-challenge need. Each returned item must carry source provenance, caution, as-of/freshness data, license, retrieval reason, and content hash. Distribution content and user annotations occupy separate ownership namespaces. Hashes verify bytes, not claims.
-

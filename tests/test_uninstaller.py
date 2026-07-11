@@ -49,6 +49,20 @@ class UninstallerTests(Phase6ScriptTestCase):
         self.assertTrue(nonempty_after_removal.is_dir())
         self.assertTrue((nonempty_after_removal / "mine.md").is_file())
 
+    def test_generated_bytecode_cleanup_never_sweeps_the_vault(self):
+        self.install()
+        bytecode = self.vault / "Sources" / "__pycache__" / "user.cpython-39.pyc"
+        bytecode.parent.mkdir()
+        bytecode.write_bytes(b"user content")
+        self.run_script(
+            "uninstall.sh",
+            "--vault",
+            self.vault,
+            "--hermes-home",
+            self.hermes_home,
+        )
+        self.assertEqual(bytecode.read_bytes(), b"user content")
+
     def test_uninstall_never_edits_config_and_prints_exact_manual_instruction(self):
         self.install()
         config = self.hermes_home / "config.yaml"

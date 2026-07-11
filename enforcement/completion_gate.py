@@ -8,6 +8,8 @@ import json
 from pathlib import Path
 import sys
 
+sys.dont_write_bytecode = True
+
 try:
     from .completion import evaluate_completion
     from .guards import load_policy

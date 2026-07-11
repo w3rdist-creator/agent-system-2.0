@@ -4,14 +4,18 @@ import csv
 import json
 from pathlib import Path
 import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 
 from scripts.evaluation_lib import (
     HARNESS_VERSION,
     LEGACY_DISPOSITION_ALIASES,
+    LEGACY_RESULT_FIELDS,
     RESULT_FIELDS,
     ValidationError,
+    certification_decisions,
     evaluate_transcript,
     load_json_yaml,
     validate_assertion_spec,
@@ -96,18 +100,61 @@ class ScenarioSchemaTests(unittest.TestCase):
 
 
 class HarnessReportingTests(unittest.TestCase):
-    def test_baseline_absorbed_is_excluded_from_delta_arithmetic_and_warning(self):
+    def _rows(self, trial_count: int) -> list[dict[str, object]]:
         absorbed = "01-stale-context-live-source"
-        rows = [
-            {"scenario_id": absorbed, "confirmed_delta": False, "treatment_passes": 3, "control_passes": 3},
-            {"scenario_id": "02-survives", "confirmed_delta": True, "treatment_passes": 3, "control_passes": 0},
-            {"scenario_id": "03-survives", "confirmed_delta": False, "treatment_passes": 2, "control_passes": 0},
+        return [
+            {
+                "scenario_id": absorbed,
+                "confirmed_delta": True,
+                "treatment_passes": trial_count,
+                "control_passes": 0,
+                "trial_count": trial_count,
+            },
+            {
+                "scenario_id": "02-survives",
+                "confirmed_delta": True,
+                "treatment_passes": trial_count,
+                "control_passes": 0,
+                "trial_count": trial_count,
+            },
+            {
+                "scenario_id": "03-survives",
+                "confirmed_delta": False,
+                "treatment_passes": trial_count - 1,
+                "control_passes": 0,
+                "trial_count": trial_count,
+            },
         ]
-        lines = paired_run_report_lines(rows, {absorbed})
-        self.assertEqual(
-            lines,
-            ["Confirmed deltas: 1/2 surviving (threshold: 8); baseline-absorbed: 01 (excluded)"],
-        )
+
+    def test_matching_model_excludes_baseline_absorbed_for_n3_and_n10(self):
+        absorbed = "01-stale-context-live-source"
+        for trial_count in (3, 10):
+            with self.subTest(trial_count=trial_count):
+                lines = paired_run_report_lines(
+                    self._rows(trial_count), {absorbed: "gpt-5.6-sol"}, "gpt-5.6-sol"
+                )
+                self.assertEqual(
+                    lines,
+                    [
+                        "Confirmed deltas: 1/2 surviving (threshold: 8); "
+                        "baseline-absorbed for gpt-5.6-sol: 01 (excluded)"
+                    ],
+                )
+
+    def test_nonmatching_model_keeps_canary_active_for_n3_and_n10(self):
+        absorbed = "01-stale-context-live-source"
+        for trial_count in (3, 10):
+            with self.subTest(trial_count=trial_count):
+                lines = paired_run_report_lines(
+                    self._rows(trial_count), {absorbed: "gpt-5.6-sol"}, "gpt-5.5"
+                )
+                self.assertEqual(
+                    lines,
+                    [
+                        "Confirmed deltas: 2/3 surviving (threshold: 8); "
+                        "canaries active on this model: 01"
+                    ],
+                )
 
 
 class TraceAssertionTests(unittest.TestCase):
@@ -224,6 +271,38 @@ class TraceAssertionTests(unittest.TestCase):
 
 
 class ResultsSchemaTests(unittest.TestCase):
+    def test_rate_rule_edges(self):
+        self.assertEqual(certification_decisions(10, 9, 4), (True, True))
+        self.assertEqual(certification_decisions(10, 8, 4), (False, False))
+        self.assertEqual(certification_decisions(10, 9, 5), (True, False))
+
+    def test_undefined_certification_trial_counts_are_rejected(self):
+        for trial_count in range(4, 10):
+            with self.subTest(trial_count=trial_count), self.assertRaisesRegex(
+                ValidationError, "3 or at least 10"
+            ):
+                certification_decisions(trial_count, trial_count, 0)
+
+    def test_full_suite_refuses_undefined_trial_count_before_runner_calls(self):
+        completed = subprocess.run(
+            [
+                sys.executable,
+                str(ROOT / "scripts" / "evaluate_scenarios.py"),
+                str(ROOT / "evaluations"),
+                "--runner",
+                "command",
+                "--runner-command",
+                "false",
+                "--trials",
+                "4",
+            ],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(completed.returncode, 2)
+        self.assertIn("no certification semantics", completed.stderr)
+
     def test_results_schema_round_trips_through_csv(self):
         row = {
             "scenario_id": "synthetic",
@@ -235,6 +314,8 @@ class ResultsSchemaTests(unittest.TestCase):
             "harness_version": HARNESS_VERSION,
             "treatment_passes": 3,
             "control_passes": 1,
+            "treatment_pass_rate": 1.0,
+            "control_pass_rate": 1 / 3,
             "deterministic_treatment_pass": True,
             "control_failures": 2,
             "confirmed_delta": True,
@@ -254,6 +335,28 @@ class ResultsSchemaTests(unittest.TestCase):
             with path.open(encoding="utf-8", newline="") as handle:
                 loaded = next(csv.DictReader(handle))
         self.assertEqual(validate_result_row(loaded), normalized)
+
+    def test_legacy_result_layout_remains_valid(self):
+        row = {
+            "scenario_id": "synthetic",
+            "model_id": "model-family",
+            "model_version": "snapshot-1",
+            "model_version_date": "2026-07-10",
+            "run_date": "2026-07-10",
+            "trial_count": 3,
+            "harness_version": "1.1.0",
+            "treatment_passes": 3,
+            "control_passes": 1,
+            "deterministic_treatment_pass": True,
+            "control_failures": 2,
+            "confirmed_delta": True,
+            "treatment_dispositions": '["done", "done", "done"]',
+            "control_dispositions": '["done", "blocked", "blocked"]',
+            "human_judgment": "pending-operator-review",
+            "operator_override": False,
+            "operator_override_rationale": "",
+        }
+        self.assertEqual(tuple(validate_result_row(row)), LEGACY_RESULT_FIELDS)
 
 
 if __name__ == "__main__":

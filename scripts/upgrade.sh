@@ -87,3 +87,4 @@ if inspection=$(python3 "$script_dir/install_manifest.py" inspect-config --herme
 else
     printf 'WARNING: config.yaml was unchanged, but skills.external_dirs could not be inspected\n'
 fi
+printf 'PLUGIN: files were upgraded preservation-first; if not already active, run hermes plugins enable evidence-first-enforcement and restart the Hermes gateway\n'

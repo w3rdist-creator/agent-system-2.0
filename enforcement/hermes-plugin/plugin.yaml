@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 contributors
+name: evidence-first-enforcement
+version: "1.3.0"
+description: "Evidence-first protected-write, credential-echo, retrieval-cap, and parked-completion enforcement."
+hooks:
+  - pre_tool_call
+  - transform_llm_output
+  - on_session_start

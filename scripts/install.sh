@@ -75,7 +75,7 @@ duplicate=$(printf '%s\n' "$inspection" | sed -n '2p')
 
 printf 'COMPATIBLE: %s\n' "$version_output"
 printf 'STRATEGY: reference-first via skills.external_dirs[%s]\n' "$external_index"
-printf 'ADVISORY: pre-tool-use enforcement wiring is runner-specific; see docs/Enforcement.md. This installer never edits config.yaml.\n'
+printf 'ENFORCEMENT: Hermes plugin payload will be installed but never enabled automatically.\n'
 
 if [ "$dry_run" = true ]; then
     printf 'DRY RUN: no files or Hermes configuration will be written\n'
@@ -85,6 +85,8 @@ if [ "$dry_run" = true ]; then
     else
         printf 'PLAN config: existing exact external directory entry retained\n'
     fi
+    printf 'PLAN manual plugin step 1: hermes plugins enable evidence-first-enforcement\n'
+    printf 'PLAN manual plugin step 2: restart the Hermes gateway after enabling the plugin\n'
     exit 0
 fi
 
@@ -105,3 +107,5 @@ if [ "$duplicate" = false ]; then
 else
     printf 'CONFIGURED: exact reference already present; config unchanged\n'
 fi
+printf 'MANUAL PLUGIN ENABLE REQUIRED: hermes plugins enable evidence-first-enforcement\n'
+printf 'MANUAL GATEWAY RESTART REQUIRED: restart the Hermes gateway after enabling the plugin so hooks become active\n'

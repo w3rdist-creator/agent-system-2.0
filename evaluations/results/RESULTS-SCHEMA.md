@@ -11,20 +11,22 @@ One row represents one scenario's paired run. Fields are ordered as follows:
 | `model_version` | Exact reported model version or deployment revision. |
 | `model_version_date` | Version/snapshot date, not the run date. |
 | `run_date` | Calendar date of the paired run. |
-| `trial_count` | Exactly `3` per arm. |
+| `trial_count` | Exactly `3` per arm for the legacy rule, or at least `10` per arm for the rate rule. |
 | `harness_version` | Version from `scripts/evaluation_lib.py`. |
-| `treatment_passes` | Count from 0 through 3. |
-| `control_passes` | Count from 0 through 3. |
-| `deterministic_treatment_pass` | True only for treatment 3/3. |
-| `control_failures` | `3 - control_passes`. |
-| `confirmed_delta` | True only for treatment 3/3 and control failure at least 2/3. |
-| `treatment_dispositions` | JSON array of the three emitted labels. |
-| `control_dispositions` | JSON array of the three emitted labels. |
+| `treatment_passes` | Count from 0 through `trial_count`. |
+| `control_passes` | Count from 0 through `trial_count`. |
+| `treatment_pass_rate` | `treatment_passes / trial_count`. Required in Release 1.3 rows. |
+| `control_pass_rate` | `control_passes / trial_count`. Required in Release 1.3 rows. |
+| `deterministic_treatment_pass` | At `n == 3`, true only for treatment 3/3. At `n >= 10`, true when treatment pass rate is at least 0.9. |
+| `control_failures` | `trial_count - control_passes`. |
+| `confirmed_delta` | At `n == 3`, treatment 3/3 and control failure at least 2/3. At `n >= 10`, treatment pass rate at least 0.9 and control pass rate at most 0.4. |
+| `treatment_dispositions` | JSON array containing one emitted label per treatment trial. |
+| `control_dispositions` | JSON array containing one emitted label per control trial. |
 | `human_judgment` | Operator rubric status or signed judgment. |
 | `operator_override` | Boolean; does not alter the mechanical delta. |
 | `operator_override_rationale` | Required by publication policy when an override is used. |
 
-The authoritative field list and validator are `RESULT_FIELDS` and `validate_result_row` in `scripts/evaluation_lib.py`. Result claims must retain the provenance fields when copied elsewhere.
+Release 1.3 adds the two pass-rate columns and records harness version `1.3.0`. Earlier CSVs remain valid with their original layout: the validator selects the legacy layout when both rate columns are absent and the Release 1.3 layout when they are present. Supplying only one rate column is invalid. The authoritative field lists and validator are `LEGACY_RESULT_FIELDS`, `RESULT_FIELDS`, and `validate_result_row` in `scripts/evaluation_lib.py`. Result claims must retain the provenance fields when copied elsewhere.
 
 Rows recorded before Release 1.1 use the former ten-label disposition vocabulary. The evaluation library accepts `merge`, `defer`, and `no-edge` in those rows and transcripts as deprecated aliases for `done`, `watch`, and `no-action`, respectively.
 

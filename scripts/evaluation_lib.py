@@ -10,7 +10,7 @@ import re
 from typing import Any, Iterable, Mapping
 
 
-HARNESS_VERSION = "1.1.0"
+HARNESS_VERSION = "1.3.0"
 
 # This is the single source of truth for emitted decision dispositions.
 DISPOSITIONS = frozenset(
@@ -59,7 +59,7 @@ SCENARIO_FIELDS = (
 OPTIONAL_SCENARIO_FIELDS = frozenset({"Baseline absorbed"})
 EMPTY_RESULT_FIELDS = ("Treatment result", "Control result", "Measured delta")
 
-RESULT_FIELDS = (
+LEGACY_RESULT_FIELDS = (
     "scenario_id",
     "model_id",
     "model_version",
@@ -77,6 +77,13 @@ RESULT_FIELDS = (
     "human_judgment",
     "operator_override",
     "operator_override_rationale",
+)
+
+RESULT_FIELDS = (
+    *LEGACY_RESULT_FIELDS[:9],
+    "treatment_pass_rate",
+    "control_pass_rate",
+    *LEGACY_RESULT_FIELDS[9:],
 )
 
 
@@ -375,14 +382,33 @@ def evaluate_transcript(transcript: Any, spec: Mapping[str, Any]) -> dict[str, A
     }
 
 
+def certification_decisions(
+    trial_count: int, treatment_passes: int, control_passes: int
+) -> tuple[bool, bool]:
+    """Return deterministic-treatment and confirmed-delta decisions for a paired run."""
+
+    if trial_count == 3:
+        treatment_pass = treatment_passes == 3
+        return treatment_pass, treatment_pass and trial_count - control_passes >= 2
+    if trial_count >= 10:
+        treatment_pass = treatment_passes / trial_count >= 0.9
+        return treatment_pass, treatment_pass and control_passes / trial_count <= 0.4
+    raise ValidationError("trial_count must be 3 or at least 10 per arm")
+
+
 def validate_result_row(row: Mapping[str, Any]) -> dict[str, Any]:
     """Validate and normalize a result row for CSV/JSON round trips."""
 
-    missing = [field for field in RESULT_FIELDS if field not in row]
-    extra = sorted(set(row) - set(RESULT_FIELDS))
+    fields = (
+        RESULT_FIELDS
+        if "treatment_pass_rate" in row or "control_pass_rate" in row
+        else LEGACY_RESULT_FIELDS
+    )
+    missing = [field for field in fields if field not in row]
+    extra = sorted(set(row) - set(fields))
     if missing or extra:
         raise ValidationError(f"result fields missing={missing} extra={extra}")
-    normalized = {field: row[field] for field in RESULT_FIELDS}
+    normalized = {field: row[field] for field in fields}
     required_text = (
         "scenario_id",
         "model_id",
@@ -400,13 +426,29 @@ def validate_result_row(row: Mapping[str, Any]) -> dict[str, Any]:
             normalized[field] = int(normalized[field])
         except (TypeError, ValueError) as exc:
             raise ValidationError(f"result field {field} must be an integer") from exc
-    if normalized["trial_count"] != 3:
-        raise ValidationError("trial_count must be 3 per arm")
+    trial_count = normalized["trial_count"]
+    certification_decisions(
+        trial_count, normalized["treatment_passes"], normalized["control_passes"]
+    )
     for field in ("treatment_passes", "control_passes", "control_failures"):
         if not 0 <= normalized[field] <= normalized["trial_count"]:
             raise ValidationError(f"result field {field} is outside the trial range")
     if normalized["control_failures"] != normalized["trial_count"] - normalized["control_passes"]:
         raise ValidationError("control_failures must equal trial_count - control_passes")
+    if fields == RESULT_FIELDS:
+        for field, passes_field in (
+            ("treatment_pass_rate", "treatment_passes"),
+            ("control_pass_rate", "control_passes"),
+        ):
+            try:
+                normalized[field] = float(normalized[field])
+            except (TypeError, ValueError) as exc:
+                raise ValidationError(f"result field {field} must be numeric") from exc
+            expected_rate = normalized[passes_field] / trial_count
+            if not 0.0 <= normalized[field] <= 1.0:
+                raise ValidationError(f"result field {field} must be between 0 and 1")
+            if abs(normalized[field] - expected_rate) > 1e-12:
+                raise ValidationError(f"result field {field} must equal {passes_field} / trial_count")
     for field in ("deterministic_treatment_pass", "confirmed_delta", "operator_override"):
         value = normalized[field]
         if isinstance(value, str):
@@ -416,11 +458,13 @@ def validate_result_row(row: Mapping[str, Any]) -> dict[str, Any]:
         if not isinstance(value, bool):
             raise ValidationError(f"result field {field} must be boolean")
         normalized[field] = value
-    expected_delta = normalized["treatment_passes"] == 3 and normalized["control_failures"] >= 2
+    expected_treatment, expected_delta = certification_decisions(
+        trial_count, normalized["treatment_passes"], normalized["control_passes"]
+    )
     if normalized["confirmed_delta"] != expected_delta:
-        raise ValidationError("confirmed_delta does not match the fixed A1 threshold")
-    if normalized["deterministic_treatment_pass"] != (normalized["treatment_passes"] == 3):
-        raise ValidationError("deterministic_treatment_pass must reflect 3/3 treatment passes")
+        raise ValidationError("confirmed_delta does not match the trial-count decision rule")
+    if normalized["deterministic_treatment_pass"] != expected_treatment:
+        raise ValidationError("deterministic_treatment_pass does not match the trial-count decision rule")
     for field in (
         "treatment_dispositions",
         "control_dispositions",

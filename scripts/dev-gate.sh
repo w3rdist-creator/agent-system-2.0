@@ -11,6 +11,7 @@ dry_run_output=/tmp/evidence-first-dry-run-output.txt
 cd "$repo_root"
 
 python3 -m unittest discover -s tests -v
+python3 -m unittest tests.test_hermes_plugin -v
 python3 scripts/verify_repo.py .
 python3 scripts/verify_private_markers.py .
 python3 scripts/verify_licenses.py source-packages skills templates packs

@@ -767,3 +767,59 @@ Telemetry citation to discharge the 1.1 kill condition: the completion gate was 
 The standalone definition-of-done commands all passed: `python3 -m unittest discover -s tests` ran 118 tests; `python3 scripts/verify_repo.py .` passed the repository, denominator, routing, pack, placeholder, script-coverage, and shell-safety checks; `python3 scripts/verify_private_markers.py .` passed across 374 text inputs; `python3 scripts/audit_context_budget.py --profile core` retained Level 0 at 394/400 and operational core at 2,999/3,000; and `python3 scripts/evaluate_scenarios.py evaluations --schema-only` passed all 16 schemas and deterministic assertion sets.
 
 `bash scripts/dev-gate.sh` then passed end to end with the same 118/118 unit tests. Its lifecycle leg planned 112 operations without dry-run writes, installed and verified 110 base files, installed both shipped packs, verified 140 manifest files, delivered the modified `agent/SOUL.md` payload as `.incoming` without clobbering the user-modified file, reported unchanged config with no new manual step, and completed preservation-first uninstall checks. `git diff --check` produced no output. No staging, commit, export, remote action, push, CI judgment, or tag was attempted; staging was deliberately skipped under the operator's sandbox instruction.
+
+## Release 1.3 release-bookkeeping command evidence
+
+Release 1.3.0 bookkeeping adds the changelog narrative, README shipping/evaluation/known-limit
+updates, the governed Release 1.3 improvement proposal, the retained roadmap row plus explicit
+released-from-deferral annotation, and this ledger section. Release 1.3 does not change the update
+or publication command flow; `docs/Update-Gate.md` and `docs/Publication-Commands.md` were confirmed
+and left untouched.
+
+Phase T applied the doctrine-pruning rule mechanically and found zero prunable lines: every
+candidate also maps to a surviving scenario. Its 04/08 boundary sentences were validated by the
+run with treatment 10/10 on gpt-5.6-sol high. The checked-in 06/07 adjudication memo made no suite
+change; scenario 06 counts over-caution against treatment, and scenario 07's control overwrote
+configuration in 6/6 trials.
+
+The certification harness now uses the documented n=10 rate rule (treatment at least 0.9, control
+at most 0.4), retains the n=3 rule for historical interpretation, refuses undefined full-run
+counts, and ships a resumable multi-model driver. Scenario 13 was 3/3 at n=3 in 1.2 but 3/10 at
+n=10, which records why the rate rule exists.
+
+**CERTIFICATE EARNED ON MERIT:** paired n=10 run on gpt-5.5 medium 2026-07-11
+(`evaluations/results/run-2026-07-11-gpt-5.5-1.3.csv`) = 8/16 surviving confirmed deltas under the
+model-scoped canary rule, threshold 8 MET, NO override (global-exclusion alternative 7/14
+disclosed everywhere both appear). The paired gpt-5.6-sol high run
+(`evaluations/results/run-2026-07-11-gpt-5.6-sol-1.3.csv`) = 7/14 surviving, below threshold, no
+claim made for that pairing; judgment-heavy scenarios 06/07/09/11/13/14 are recorded as 1.4
+boundary data. Scenario 01 is baseline-absorbed on gpt-5.6-sol high (both arms 10/10) yet a perfect
+10/10-vs-0/10 delta on gpt-5.5 medium, showing that doctrine value migrates downward as models
+strengthen. `evaluations/README.md` records the model-scoped canary rule and dated
+after-observation disclosure.
+
+The Hermes enforcement plugin ships as manifest-tracked payload with preservation-first lifecycle
+semantics, a development-gate tool-loop leg, and operator-recorded live denial evidence under
+`examples/live-enforcement-denial/`. Scored against the Opus 4.8 external review (8.5/10, session
+`claude/harness-rating-fae06a`, operator-vault source note dated 2026-07-11), these additions retire
+both enforcement capping findings for the published artifact. The vault `Telemetry Ledger` has
+703+ rows derived from checked-in transcript sets, and the operator-local live enforcement
+heartbeat JSONL supplies the second governance citation; together they discharge the standing
+telemetry citation duty.
+
+The standalone definition-of-done commands all passed: `python3 -m unittest discover -s tests`
+ran 130 tests; `python3 scripts/verify_repo.py .` passed the repository, denominator, routing,
+pack, placeholder, script-coverage, and shell-safety checks; `python3
+scripts/verify_private_markers.py .` passed across 385 text inputs; `python3
+scripts/audit_context_budget.py --profile core` retained Level 0 at 394/400 and operational core
+at 2,998/3,000 approximate tokens; and `python3 scripts/evaluate_scenarios.py evaluations
+--schema-only` passed all 16 schemas and deterministic assertion sets.
+
+`bash scripts/dev-gate.sh` then passed end to end with the same 130/130 unit tests plus the
+explicit four-test Hermes plugin leg. Its lifecycle leg planned 117 operations without dry-run
+writes, installed and verified 113 base files across the distribution and plugin target roots,
+installed both shipped packs, verified 143 manifest files, delivered the modified `agent/SOUL.md`
+payload as `.incoming` without clobbering the user-modified file, reported the unchanged config
+and manual plugin activation boundary, and completed preservation-first uninstall checks. `git
+diff --check` produced no output. No staging, commit, export, remote action, push, CI judgment, or
+tag was attempted; staging was deliberately skipped under the operator's sandbox instruction.

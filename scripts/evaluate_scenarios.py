@@ -17,6 +17,7 @@ try:
         HARNESS_VERSION,
         RESULT_FIELDS,
         ValidationError,
+        certification_decisions,
         evaluate_transcript,
         has_deterministic_observable_assertion,
         iter_scenario_dirs,
@@ -28,6 +29,7 @@ except ModuleNotFoundError:  # Imported as scripts.evaluate_scenarios by unit te
         HARNESS_VERSION,
         RESULT_FIELDS,
         ValidationError,
+        certification_decisions,
         evaluate_transcript,
         has_deterministic_observable_assertion,
         iter_scenario_dirs,
@@ -62,27 +64,40 @@ EXPECTED_SCENARIO_IDS = frozenset(
 
 
 def paired_run_report_lines(
-    rows: list[dict[str, Any]], baseline_absorbed_ids: set[str]
+    rows: list[dict[str, Any]], baseline_absorbed_models: dict[str, str], model_id: str
 ) -> list[str]:
     """Return delta-accounting lines for a complete paired run."""
 
-    surviving = [row for row in rows if row["scenario_id"] not in baseline_absorbed_ids]
+    excluded_ids = {
+        scenario_id
+        for scenario_id, absorbed_model in baseline_absorbed_models.items()
+        if absorbed_model == model_id
+    }
+    active_canary_ids = set(baseline_absorbed_models) - excluded_ids
+    surviving = [row for row in rows if row["scenario_id"] not in excluded_ids]
     confirmed = sum(row["confirmed_delta"] for row in surviving)
-    absorbed_labels = sorted(scenario_id.split("-", 1)[0] for scenario_id in baseline_absorbed_ids)
-    absorbed = ", ".join(absorbed_labels) if absorbed_labels else "none"
-    lines = [
-        f"Confirmed deltas: {confirmed}/{len(surviving)} surviving (threshold: 8); "
-        f"baseline-absorbed: {absorbed} (excluded)"
-    ]
+    clauses: list[str] = []
+    if excluded_ids:
+        excluded = ", ".join(
+            sorted(scenario_id.split("-", 1)[0] for scenario_id in excluded_ids)
+        )
+        clauses.append(f"baseline-absorbed for {model_id}: {excluded} (excluded)")
+    if active_canary_ids:
+        active = ", ".join(
+            sorted(scenario_id.split("-", 1)[0] for scenario_id in active_canary_ids)
+        )
+        clauses.append(f"canaries active on this model: {active}")
+    suffix = f"; {'; '.join(clauses)}" if clauses else ""
+    lines = [f"Confirmed deltas: {confirmed}/{len(surviving)} surviving (threshold: 8){suffix}"]
     redesign = [
         row["scenario_id"]
         for row in rows
-        if row["scenario_id"] not in baseline_absorbed_ids
-        and row["treatment_passes"] == 3
-        and row["control_passes"] == 3
+        if row["scenario_id"] not in excluded_ids
+        and row["treatment_passes"] == row.get("trial_count", TRIALS_PER_ARM)
+        and row["control_passes"] == row.get("trial_count", TRIALS_PER_ARM)
     ]
     if redesign:
-        lines.append("Redesign or remove scenarios passing 3/3 in both arms: " + ", ".join(redesign))
+        lines.append("Redesign or remove scenarios passing every trial in both arms: " + ", ".join(redesign))
     return lines
 
 
@@ -180,8 +195,16 @@ def execute_suite(args: argparse.Namespace, suite: list[tuple[Path, dict[str, An
     if args.runner == "command" and not args.runner_command:
         print("ERROR: --runner command requires --runner-command.", file=sys.stderr)
         return 2
-    paired_run = args.scenario is None and args.arm == "both" and args.trials == TRIALS_PER_ARM
+    paired_run = args.scenario is None and args.arm == "both"
     if paired_run:
+        if args.trials != TRIALS_PER_ARM and args.trials < 10:
+            print(
+                "ERROR: full paired certification requires --trials 3 (legacy) or "
+                "--trials 10 or greater (rate rule); no certification semantics are "
+                "defined for 3 < n < 10.",
+                file=sys.stderr,
+            )
+            return 2
         missing_provenance = [
             flag
             for flag, value in (
@@ -240,7 +263,10 @@ def execute_suite(args: argparse.Namespace, suite: list[tuple[Path, dict[str, An
 
         treatment_passes = sum(result["passed"] for result in arm_results["treatment"])
         control_passes = sum(result["passed"] for result in arm_results["control"])
-        control_failures = TRIALS_PER_ARM - control_passes
+        control_failures = args.trials - control_passes
+        deterministic_treatment_pass, confirmed_delta = certification_decisions(
+            args.trials, treatment_passes, control_passes
+        )
         row = validate_result_row(
             {
                 "scenario_id": scenario["Scenario ID"],
@@ -248,13 +274,15 @@ def execute_suite(args: argparse.Namespace, suite: list[tuple[Path, dict[str, An
                 "model_version": args.model_version,
                 "model_version_date": args.model_version_date,
                 "run_date": date.today().isoformat(),
-                "trial_count": TRIALS_PER_ARM,
+                "trial_count": args.trials,
                 "harness_version": HARNESS_VERSION,
                 "treatment_passes": treatment_passes,
                 "control_passes": control_passes,
-                "deterministic_treatment_pass": treatment_passes == TRIALS_PER_ARM,
+                "treatment_pass_rate": treatment_passes / args.trials,
+                "control_pass_rate": control_passes / args.trials,
+                "deterministic_treatment_pass": deterministic_treatment_pass,
                 "control_failures": control_failures,
-                "confirmed_delta": treatment_passes == TRIALS_PER_ARM and control_failures >= 2,
+                "confirmed_delta": confirmed_delta,
                 "treatment_dispositions": json.dumps(
                     [result["emitted_disposition"] for result in arm_results["treatment"]]
                 ),
@@ -287,14 +315,22 @@ def execute_suite(args: argparse.Namespace, suite: list[tuple[Path, dict[str, An
             writer.writerow(row)
 
     treatment_green = sum(row["deterministic_treatment_pass"] for row in rows)
-    baseline_absorbed_ids = {
-        scenario["Scenario ID"]
+    baseline_absorbed_models = {
+        scenario["Scenario ID"]: scenario["Baseline absorbed"]["model"]
         for _, scenario, _ in suite
         if "Baseline absorbed" in scenario
     }
     print(f"Wrote {len(rows)} scenario result rows to {output}")
-    print(f"Treatment 3/3: {treatment_green}/{len(rows)}")
-    for line in paired_run_report_lines(rows, baseline_absorbed_ids):
+    if args.trials == TRIALS_PER_ARM:
+        print(f"Treatment 3/3: {treatment_green}/{len(rows)}")
+    else:
+        print(f"Treatment rate >= 0.9: {treatment_green}/{len(rows)}")
+        for row in rows:
+            print(
+                f"{row['scenario_id']}: treatment {row['treatment_passes']}/{args.trials}; "
+                f"control {row['control_passes']}/{args.trials}"
+            )
+    for line in paired_run_report_lines(rows, baseline_absorbed_models, args.model_id):
         print(line)
     return 0
 

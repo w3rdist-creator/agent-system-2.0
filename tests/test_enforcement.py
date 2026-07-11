@@ -192,7 +192,8 @@ class EnforcementTests(Phase6ScriptTestCase):
 
     def test_install_and_uninstall_round_trip_tracks_enforcement(self):
         install = self.install()
-        self.assertIn("ADVISORY: pre-tool-use enforcement wiring is runner-specific", install.stdout)
+        self.assertIn("ENFORCEMENT: Hermes plugin payload will be installed", install.stdout)
+        self.assertIn("MANUAL PLUGIN ENABLE REQUIRED", install.stdout)
         installed = self.hermes_home / "distributions" / "evidence-first" / "enforcement"
         for name in ("policy.yaml", "completion.py", "completion_gate.py"):
             with self.subTest(name=name):

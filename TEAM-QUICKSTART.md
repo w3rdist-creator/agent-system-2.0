@@ -28,7 +28,7 @@ bash scripts/install.sh --dry-run --vault "$HOME/Evidence-First-Vault"
 bash scripts/install.sh --vault "$HOME/Evidence-First-Vault"
 ```
 
-The installer will print **one manual step** — add one line to `~/.hermes/config.yaml` under `skills.external_dirs`, exactly as printed. This is deliberate: nothing in this system ever edits your Hermes config, in either direction. Make the edit, then:
+When needed, the installer prints the manual `skills.external_dirs` addition. It also always prints two Hermes plugin activation steps: run `hermes plugins enable evidence-first-enforcement`, then restart the Hermes gateway. This is deliberate: the distribution never edits your Hermes config, enables a plugin, or restarts a service. Perform the printed steps, then:
 
 ```bash
 # 3. Confirm the install is complete and active:
@@ -56,13 +56,13 @@ Every unit of work ends with exactly one of these. They're how you scan agent ou
 
 | Label | Means |
 |---|---|
-| `act` | a justified bounded action was taken or started; more remains |
+| `act` | an action or recorded revision awaits downstream application or verification |
 | `done` | the requested outcome itself is verified complete |
-| `blocked` | a dependency, approval, or missing evidence prevents progress |
+| `blocked` | a dependency, approval, or disputed status or completion claim prevents progress |
 | `needs-human` | a judgment or authority call is yours to make |
 | `no-action` | after investigation, deliberately leave world state unchanged without rejecting a candidate |
 | `watch` | parked, with a named condition that reopens it |
-| `kill` | reject or retire a proposal, candidate, or mechanism |
+| `kill` | reject a forward-looking proposal or retire a mechanism, never dispute a completion claim |
 
 Deprecated aliases in old ledgers: `merge` means `done`, `defer` means `watch`, and `no-edge` means `no-action`.
 
@@ -83,7 +83,7 @@ Keep each member's installed vault personal and unsynced. Add one shared vault, 
 ## Known boundaries (read before you judge it)
 
 1. **Team sync is contract-only.** The [shared-vault contract](docs/Team-Vault-Contract.md) defines topology, write authority, attribution, promotion, and conflict handling. Real-time sync, permissions enforcement, and automatic merge remain deliberately manual until one external team requests tooling or two maintainer production uses cannot be served cleanly by the contract.
-2. **Enforcement requires runner wiring.** Machine-checkable protected-write, credential-echo, and retrieval-cap rules ship as a pre-tool-use hook, paired with a completion hook that checks parked-state answer surfaces on the way out. A runner that never calls the hooks gets no enforcement; judgment-level doctrine and authority boundaries remain advisory rather than a security layer. Keep real credentials out of anything an agent reads.
+2. **Hermes enforcement requires manual activation.** Hermes v0.18.2+ can use the shipped manifest-tracked plugin after you run the printed enable command and restart the gateway; this release's installer accepts the v0.18.x compatibility line. The dev gate proves the Hermes hook directive contract; the live example records one operator-observed real denial. Other runners must wire the inbound and outbound CLI contracts themselves. A runner that never calls the hooks gets no enforcement, and judgment-level doctrine remains advisory rather than a security layer. Keep real credentials out of anything an agent reads.
 3. **Upgrade is manifest-scoped.** `scripts/upgrade.sh` safely migrates distribution-owned base files, preserving edits beside `.incoming` proposals. Packs already installed into the vault are user content and are not upgraded; use uninstall/reinstall if manifest migration cannot complete cleanly.
 4. **The eval certificate is narrow.** One model, one date, simulated tools, single-turn scenarios — all checked in under `evaluations/results/`. Run `scripts/recert.sh` for a current single-arm smoke result; it does not replace the paired three-trial/two-arm delta certificate.
 5. **Windows is untested.** POSIX path only (WSL2 inferred compatible, not CI-tested).

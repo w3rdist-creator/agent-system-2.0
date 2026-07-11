@@ -14,6 +14,16 @@ These operator-directed additions were admitted on 2026-07-10 and shipped in Rel
 | Self-collected telemetry | Shipped | Operator direction, 2026-07-10 | Only named machine artifacts are read; rows do not authorize action. |
 | Team vault contract | Contract shipped | Operator direction, 2026-07-10 | Sync, permissions, CRDT merge, and other team tooling remain deferred. |
 
+## Released from deferral in 1.3
+
+The Hermes enforcement activation recipe was admitted on 2026-07-11 after the operator-recorded
+live denial and the repeatable hook-contract test supplied the trigger and evidence the external
+review found missing. Other plugin and MCP integrations remain trigger-gated in the table below.
+
+| Capability | 1.3 status | Activation trigger recorded | Remaining boundary |
+|---|---|---|---|
+| Hermes enforcement plugin | Shipped as manifest-tracked payload | Operator live denial plus hook-contract test, 2026-07-11 | Manual enable and gateway restart remain operator actions; the plugin is not a sandbox. |
+
 | Capability | Earliest release | Activation trigger | Blocking question |
 |---|---:|---|---|
 | Full Hermes config/profile/toolset layer | 1.1 | One external clean-room user succeeds | Can all touched capabilities remain namespaced without owning upstream files? |
@@ -27,7 +37,7 @@ These operator-directed additions were admitted on 2026-07-10 and shipped in Rel
 | Markets research-only | 1.1+ | Explicit demand plus liability/freshness review | Can research-only/no-action boundaries remain enforceable? |
 | Native Windows | 1.1+ | One real Windows user or contributor | Is a second installer/CI surface maintainable? |
 | Gateway/messaging/voice/mobile | 1.1+ | One user needs it | Are upstream pointers better than version-stale recipes? |
-| MCP/plugin activation recipes | 1.1+ | Verified integration demand | Can version, secret, and authority boundaries be tested? |
+| MCP/plugin activation recipes | Hermes enforcement plugin shipped in 1.3; other integrations remain deferred | Operator live denial plus hook-contract test, 2026-07-11 | Hermes activation is documented and tested; which other integration has verified demand and testable version, secret, and authority boundaries? |
 | Cron/watchdog/control tower | 1.1+ | Repeated scheduling need beyond the shipped operator recipes | Still deferred: 1.1 documents cron recipes for metabolism and recert but installs no scheduler. Is there one scheduler owner, positive heartbeat, and usefulness evidence? |
 | Team vault sync/permissions/merge tooling | 1.2+ | One external team request or two maintainer production uses not served by the 1.1 contract | Can tooling enforce the contract without owning user content or inventing a second merge authority? |
 | Backup/restore/upgrade tooling | Upgrade shipped in 1.2; backup/restore remains deferred | Trigger fired by the 1.1 release's first real upgrade need | Upgrade now uses manifest migration without owning upstream, pack, or user state; what evidence should trigger backup/restore? |

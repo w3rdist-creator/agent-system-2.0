@@ -4,7 +4,7 @@ Agent System 2.0 is an evidence-first distribution for **Hermes Agent**, not a p
 
 **New user? Start with the [Team Quickstart](TEAM-QUICKSTART.md)** — install to first working session in fifteen minutes, plus the honest list of known boundaries.
 
-The project is a bounded successor candidate to five earlier public repositories. It is justified by self-governance, selective loading, safe ownership, and measurable behavior—not by shipping more folders. The repository passed its own admission tests in the [1.0 improvement proposal](examples/improvement-proposal--this-repository.md), [1.1 improvement proposal](examples/improvement-proposal--release-1.1.md), [1.2 improvement proposal](examples/improvement-proposal--release-1.2.md), and [loop contract](examples/loop-contract--this-repository.md).
+The project is a bounded successor candidate to five earlier public repositories. It is justified by self-governance, selective loading, safe ownership, and measurable behavior—not by shipping more folders. The repository passed its own admission tests in the [1.0 improvement proposal](examples/improvement-proposal--this-repository.md), [1.1 improvement proposal](examples/improvement-proposal--release-1.1.md), [1.2 improvement proposal](examples/improvement-proposal--release-1.2.md), [1.3 improvement proposal](examples/improvement-proposal--release-1.3.md), and [loop contract](examples/loop-contract--this-repository.md).
 
 ## Install quickstart
 
@@ -24,15 +24,19 @@ cd agent-system-2.0
 bash scripts/install.sh --dry-run --vault "$HOME/Evidence-First-Vault"
 bash scripts/install.sh --vault "$HOME/Evidence-First-Vault"
 
-# The installer prints one manual step: add the printed path as a new entry
+# The installer prints a manual config step: add the printed path as a new entry
 # under skills.external_dirs in ~/.hermes/config.yaml. Neither installer nor
 # uninstaller ever edits config.yaml. Then confirm activation:
 bash scripts/verify-install.sh \
   --vault "$HOME/Evidence-First-Vault" \
   --hermes-home "$HOME/.hermes"
+
+# The installer also prints these operator-owned plugin activation steps:
+hermes plugins enable evidence-first-enforcement
+# Then restart the Hermes gateway.
 ```
 
-The installer refuses unsupported Hermes versions before writing. It installs owned files under `~/.hermes/distributions/evidence-first/`, prints the exact one-line `skills.external_dirs` addition for you to make (Hermes v0.18.x `config set` cannot append to lists, and this distribution never edits `config.yaml` itself), writes vault conflicts as `.incoming` proposals, and records hashes in an install manifest. `verify-install.sh` fails closed until the config entry exists. Uninstall preserves modified distribution files and user files; it never edits `config.yaml` and prints the exact manual config-removal instruction, symmetric with install.
+The installer refuses unsupported Hermes versions before writing. It installs owned files under `~/.hermes/distributions/evidence-first/`, installs the manifest-tracked plugin below `~/.hermes/plugins/evidence-first-enforcement/`, prints the exact one-line `skills.external_dirs` addition for you to make (Hermes v0.18.x `config set` cannot append to lists, and this distribution never edits `config.yaml` itself), and prints but does not perform plugin enablement or gateway restart. Vault conflicts become `.incoming` proposals, and the install manifest records both target roots. `verify-install.sh` fails closed until the config entry exists. Uninstall preserves modified distribution files and user files; it never edits `config.yaml` and prints the exact manual config-removal instruction, symmetric with install.
 
 List or install the optional shipped packs:
 
@@ -72,18 +76,25 @@ Release 1.2 adds:
 - baseline-absorbed handling for scenarios 01 and 05 after two redesign rounds, retaining them as regression canaries while excluding them from surviving delta accounting;
 - a canonical boundary where rejecting a proposal, candidate, or mechanism is `kill`, while `no-action` deliberately leaves world state unchanged after investigation.
 
+Release 1.3 adds:
+
+- n=10 rate-based certification and a resumable multi-model paired-suite driver while preserving the historical n=3 rule;
+- model-scoped canary accounting with a dated after-observation disclosure and both accounting alternatives reported;
+- mechanically applied doctrine pruning (zero eligible lines), sharper 04/08 disposition boundaries, and a checked-in 06/07 adjudication memo;
+- a manifest-tracked Hermes enforcement plugin, a development-gate tool-loop leg, and operator-recorded live denial evidence.
+
 ## Known limits
 
-Machine-checkable rules are enforceable through the shipped inbound and outbound hooks, but only runners that wire and honor them receive enforcement; the completion regexes verify the presence, not the quality, of parked-state metadata, and judgment-level doctrine remains advisory. Team use now has an explicit vault contract, but the release does not ship real-time sync, permissions enforcement, or CRDT merge tooling. Upgrade automation now migrates manifest-tracked base-distribution files, preserves user modifications with `.incoming` proposals, and leaves `config.yaml` untouched; installed packs and user content are not upgraded, and backup/restore automation remains deferred. The full Hermes platform layer, native Windows, gateway and deployment integrations, MCP/plugin activation recipes, automated model grading, hosted UI, non-Hermes adapters, and corpus payloads remain deferred. Context Spine ships only as an architecture and bounded-retrieval contract; Deep Timeline remains its deferred temporal subcorpus. See [the roadmap](docs/Deferred-Capability-Roadmap.md).
+Machine-checkable enforcement is now demonstrated for Hermes through the shipped plugin: the development gate exercises its hook contract and the live example records an operator-observed denial. Other runners still receive only the inbound/outbound CLI contract and must wire and honor it; the plugin is not a sandbox, and completion regexes verify the presence, not the quality, of parked-state metadata, so judgment-level doctrine remains advisory. Team use now has an explicit vault contract, but the release does not ship real-time sync, permissions enforcement, or CRDT merge tooling. Upgrade automation now migrates manifest-tracked base-distribution files and the Hermes plugin, preserves user modifications with `.incoming` proposals, and leaves `config.yaml` untouched; installed packs and user content are not upgraded, and backup/restore automation remains deferred. The full Hermes platform layer, native Windows, gateway and deployment integrations beyond the shipped enforcement plugin, automated model grading, hosted UI, non-Hermes adapters, and corpus payloads remain deferred. Context Spine ships only as an architecture and bounded-retrieval contract; Deep Timeline remains its deferred temporal subcorpus. See [the roadmap](docs/Deferred-Capability-Roadmap.md).
 
 ## Evaluation status
 
-Paired 96-trial run on gpt-5.6-sol reasoning high, 2026-07-10, checked in at evaluations/results/run-2026-07-10-gpt-5.6-sol-1.2.csv: 6/14 surviving confirmed deltas (below the fixed threshold of 8; operator-directed release override recorded per-row), treatment 3/3 on 9/16; the kill/no-action boundary rule converted scenarios 03, 10, and 13 into confirmed deltas; scenarios 04 and 08 each lost one trial to blocked-vs-kill and act-vs-done label blurs, recorded as 1.3 boundary data.
+**CERTIFICATE EARNED ON MERIT:** paired n=10 run on gpt-5.5 medium 2026-07-11 ([CSV](evaluations/results/run-2026-07-11-gpt-5.5-1.3.csv)) = 8/16 surviving confirmed deltas under the model-scoped canary rule, threshold 8 MET, NO override (global-exclusion alternative 7/14 disclosed everywhere both appear).
 
-Scenarios 01 and 05: two live-probed redesign rounds passed both arms; both marked Baseline absorbed (gpt-5.6-sol high, 2026-07-10), retained as regression canaries, excluded from surviving delta accounting; tuning record at evaluations/results/tuning-2026-07-10-gpt-5.6-sol-scenarios-01-05.md; their SOUL lines are annotated pruning candidates for 1.3. The earlier gpt-5.5 medium 10/16 certificate certifies Release 1.0's former ten-label vocabulary only. The live recert log's single-arm smoke is not paired delta evidence. Full dev-gate green including the new upgrade leg; a real v1.1.0-to-1.2 upgrade was verified by the advisor (user-modified SOUL.md preserved byte-for-byte, .incoming supersession delivered, config.yaml untouched, manifest schema 2). Every result remains specific to its named model, reasoning setting, runner, date, and vocabulary rather than universal proof.
+The paired gpt-5.6-sol high run ([CSV](evaluations/results/run-2026-07-11-gpt-5.6-sol-1.3.csv)) = 7/14 surviving, below threshold, no claim made for that pairing; judgment-heavy scenarios 06/07/09/11/13/14 are recorded as 1.4 boundary data. The headline finding is that doctrine value migrates downward as models strengthen: scenario 01 was absorbed on sol (both arms 10/10) yet produced a perfect 10/10-vs-0/10 delta on gpt-5.5. Scenario 13 was 3/3 at n=3 in 1.2 but 3/10 at n=10, demonstrating why the rate rule exists. The canary design, model-scoped accounting, and dated after-observation disclosure are documented in [the evaluation methodology](evaluations/README.md). Every result remains specific to its named model, reasoning setting, runner, date, and vocabulary rather than universal proof.
 
 ## Release status
 
-Release 1.0 is published. Release 1.2.0 is the subsequent update described here; its below-threshold paired result is carried under the recorded operator-directed override, not represented as a threshold pass. Mechanical development and export gates do not push, tag, or supersede predecessors. Predecessors remain governed by the separate 30-day/five-use and operator-approval conditions.
+Release 1.0 is published. Release 1.3.0 is the subsequent update described here and carries the first certificate earned on the current vocabulary without an override. Mechanical development and export gates do not push, tag, or supersede predecessors. Predecessors remain governed by the separate 30-day/five-use and operator-approval conditions.
 
 For design and operating boundaries, read [Architecture](docs/Architecture.md), [Admission and Exclusion](docs/Admission-and-Exclusion-Policy.md), [Token and Context Budget](docs/Token-and-Context-Budget.md), and [Sanitization and Publication](docs/Sanitization-and-Publication.md).

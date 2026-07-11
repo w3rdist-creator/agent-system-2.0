@@ -40,14 +40,14 @@ The closed runtime vocabulary (source of truth `scripts/evaluation_lib.py`, enfo
 act | watch | no-action | blocked | done | kill | needs-human
 ```
 
-The label must be evidence-supported and change the next state; no synonyms.
+Use one evidence-supported label; no synonyms.
 
-- `act`: a justified bounded action is performed or initiated now; the larger outcome is not yet verified complete.
+- `act`: record or perform a bounded action; a revision, fix, or decision awaiting downstream application or verification remains `act`.
 - `watch`: park pending a named signal or governed return condition.
 - `no-action`: evidence supports deliberately leaving state unchanged, including when an investigation finds no supported advantage or connection; never use it for an unverified claim.
 - `blocked`: a concrete dependency, missing approval, or missing or contradicted completion evidence prevents progress.
-- `done`: the requested outcome itself is verified complete end-to-end, including a completed consolidation recorded in the decision surface.
-- `kill`: reject or retire a governed proposal or mechanism; an unverified completion claim is `blocked`, not `kill`.
+- `done`: the requested outcome itself is verified complete; record completed consolidations in the decision surface.
+- `kill`: retire a mechanism or reject a forward-looking proposal; disputing a worker status or unverified `done` claim is `blocked`, never `kill`.
 - `needs-human`: a human judgment, approval, or authority decision is next.
 
 Rejecting a proposal, candidate, or mechanism is `kill`; `no-action` means deliberately leaving world state unchanged after investigation.

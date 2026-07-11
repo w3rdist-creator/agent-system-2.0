@@ -144,14 +144,31 @@ def inspect_config(args: argparse.Namespace) -> int:
     return 0
 
 
-def source_files(root: Path) -> list[tuple[Path, Path, str]]:
-    result: list[tuple[Path, Path, str]] = []
+def source_files(root: Path, vault: Path) -> list[tuple[Path | bytes, Path, str]]:
+    result: list[tuple[Path | bytes, Path, str]] = []
     distribution_root = Path("__DISTRIBUTION__")
+    plugin_root = Path("__PLUGIN__")
     for directory in ("agent", "enforcement", "skills", "templates"):
         source_root = root / directory
         for source in sorted(source_root.rglob("*")):
-            if source.is_file() and "__pycache__" not in source.parts and source.suffix != ".pyc":
+            if (
+                source.is_file()
+                and "__pycache__" not in source.parts
+                and source.suffix != ".pyc"
+                and "hermes-plugin" not in source.relative_to(source_root).parts
+            ):
                 result.append((source, distribution_root / directory / source.relative_to(source_root), "hermes-distribution"))
+    plugin_source = root / "enforcement" / "hermes-plugin"
+    for source in sorted(plugin_source.iterdir()):
+        if source.is_file():
+            result.append((source, plugin_root / source.name, "hermes-plugin"))
+    result.append(
+        (
+            (str(vault) + "\n").encode("utf-8"),
+            plugin_root / "vault-path.txt",
+            "hermes-plugin-state",
+        )
+    )
     result.append(
         (
             root / "packs" / "manifest.yaml",
@@ -174,10 +191,14 @@ def source_files(root: Path) -> list[tuple[Path, Path, str]]:
     return result
 
 
-def destination_for(relative: Path, vault: Path, distribution: Path) -> Path:
+def destination_for(
+    relative: Path, vault: Path, distribution: Path, plugin: Path
+) -> Path:
     parts = relative.parts
     if parts and parts[0] == "__DISTRIBUTION__":
         return distribution.joinpath(*parts[1:])
+    if parts and parts[0] == "__PLUGIN__":
+        return plugin.joinpath(*parts[1:])
     return vault / relative
 
 
@@ -190,10 +211,27 @@ def proposed_destination(target: Path) -> tuple[Path, str]:
     return incoming, "preexisting"
 
 
-def copy_owned(source: Path, target: Path, component: str) -> dict[str, str]:
+def payload_hash(source: Path | bytes) -> str:
+    if isinstance(source, Path):
+        return sha256(source)
+    return hashlib.sha256(source).hexdigest()
+
+
+def write_payload(source: Path | bytes, target: Path) -> None:
+    if isinstance(source, Path):
+        shutil.copyfile(source, target)
+    else:
+        target.write_bytes(source)
+
+
+def display_source(source: Path | bytes, root: Path) -> str:
+    return str(source.relative_to(root)) if isinstance(source, Path) else "<generated vault-path.txt>"
+
+
+def copy_owned(source: Path | bytes, target: Path, component: str) -> dict[str, str]:
     actual, original_state = proposed_destination(target)
     actual.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(source, actual)
+    write_payload(source, actual)
     return {
         "path": str(actual),
         "original_state": original_state,
@@ -206,10 +244,11 @@ def install_plan(args: argparse.Namespace) -> int:
     root = absolute(args.root)
     vault = absolute(args.vault)
     distribution = absolute(args.hermes_home) / "distributions" / "evidence-first"
-    for source, relative, component in source_files(root):
-        target = destination_for(relative, vault, distribution)
+    plugin = absolute(args.hermes_home) / "plugins" / "evidence-first-enforcement"
+    for source, relative, component in source_files(root, vault):
+        target = destination_for(relative, vault, distribution, plugin)
         actual, state = proposed_destination(target)
-        print(f"PLAN {component}: {source.relative_to(root)} -> {actual} ({state})")
+        print(f"PLAN {component}: {display_source(source, root)} -> {actual} ({state})")
     print(f"PLAN manifest: {manifest_path(vault)}")
     return 0
 
@@ -219,13 +258,20 @@ def install(args: argparse.Namespace) -> int:
     vault = absolute(args.vault)
     hermes_home = absolute(args.hermes_home)
     distribution = hermes_home / "distributions" / "evidence-first"
+    plugin = hermes_home / "plugins" / "evidence-first-enforcement"
     path = manifest_path(vault)
     if path.exists():
         raise InstallError(f"existing install manifest; refusing to overwrite: {path}")
 
     entries = []
-    for source, relative, component in source_files(root):
-        entries.append(copy_owned(source, destination_for(relative, vault, distribution), component))
+    for source, relative, component in source_files(root, vault):
+        entries.append(
+            copy_owned(
+                source,
+                destination_for(relative, vault, distribution, plugin),
+                component,
+            )
+        )
     data: dict[str, object] = {
         "manifest_schema_version": MANIFEST_SCHEMA_VERSION,
         "strategy": "reference-first",
@@ -260,6 +306,7 @@ def upgrade(args: argparse.Namespace) -> int:
         raise InstallError("refusing upgrade: --hermes-home does not match the install manifest")
 
     distribution = requested_home / "distributions" / "evidence-first"
+    plugin = requested_home / "plugins" / "evidence-first-enforcement"
     files = data.get("files")
     if not isinstance(files, list):
         raise InstallError("install manifest files must be a list")
@@ -283,9 +330,9 @@ def upgrade(args: argparse.Namespace) -> int:
     matched: set[Path] = set()
     counts = {"replaced": 0, "preserved": 0, "added": 0, "retired": 0, "warnings": 0}
 
-    for source, relative, component in source_files(root):
-        target = destination_for(relative, vault, distribution)
-        source_hash = sha256(source)
+    for source, relative, component in source_files(root, vault):
+        target = destination_for(relative, vault, distribution, plugin)
+        source_hash = payload_hash(source)
         old = managed.get(target)
         if old is None:
             actual, state = proposed_destination(target)
@@ -302,7 +349,11 @@ def upgrade(args: argparse.Namespace) -> int:
 
         matched.add(target)
         installed = Path(str(old["path"]))
-        if not (within(installed, vault) or within(installed, distribution)):
+        if not (
+            within(installed, vault)
+            or within(installed, distribution)
+            or within(installed, plugin)
+        ):
             raise InstallError(f"out-of-scope manifest path; refusing upgrade: {installed}")
         old_hash = old.get("sha256")
         marked_modified = "superseded_by_incoming" in old
@@ -364,7 +415,11 @@ def upgrade(args: argparse.Namespace) -> int:
         if logical in matched:
             continue
         installed = Path(str(old["path"]))
-        if not (within(installed, vault) or within(installed, distribution)):
+        if not (
+            within(installed, vault)
+            or within(installed, distribution)
+            or within(installed, plugin)
+        ):
             raise InstallError(f"out-of-scope retired manifest path; refusing upgrade: {installed}")
         if installed.is_file() and sha256(installed) == old.get("sha256") and "superseded_by_incoming" not in old:
             actions.append({"kind": "retired", "path": installed})
@@ -403,13 +458,13 @@ def upgrade(args: argparse.Namespace) -> int:
             if kind in {"replaced", "added"}:
                 destination = Path(str(action["path"]))
                 destination.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copyfile(Path(str(action["source"])), destination)
+                write_payload(action["source"], destination)  # type: ignore[arg-type]
                 print(f"{kind.upper()}: {destination}")
             elif kind == "preserved":
                 incoming = Path(str(action["incoming"]))
                 if action["write"]:
                     incoming.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copyfile(Path(str(action["source"])), incoming)
+                    write_payload(action["source"], incoming)  # type: ignore[arg-type]
                 print(f"PRESERVED WITH INCOMING: {action['path']} -> {incoming}")
             elif kind == "retired":
                 retired = Path(str(action["path"]))
@@ -419,7 +474,7 @@ def upgrade(args: argparse.Namespace) -> int:
             elif kind == "warning":
                 print(f"WARNING: {action['message']}")
         parents.update(remove_generated_bytecode(distribution))
-        remove_empty_parents(parents, (vault, distribution))
+        remove_empty_parents(parents, (vault, distribution, plugin))
         data["manifest_schema_version"] = MANIFEST_SCHEMA_VERSION
         data["files"] = new_entries + pack_entries
         write_manifest(manifest_file, data)
@@ -524,6 +579,10 @@ def verify(args: argparse.Namespace) -> int:
                 failures.append(f"missing installed file: {path}")
             elif sha256(path) != raw.get("sha256"):
                 failures.append(f"hash mismatch: {path}")
+        plugin = expected_home / "plugins" / "evidence-first-enforcement"
+        for name in ("__init__.py", "plugin.yaml", "vault-path.txt"):
+            if not (plugin / name).is_file():
+                failures.append(f"missing Hermes plugin file: {plugin / name}")
         if data.get("config_entry_added"):
             external_path = str(data.get("external_dirs_path"))
             entries = external_dirs_from_config(expected_home / "config.yaml")
@@ -610,6 +669,7 @@ def uninstall(args: argparse.Namespace) -> int:
     if data.get("hermes_home") != str(requested_home):
         raise InstallError("refusing uninstall: --hermes-home does not match the install manifest")
     distribution = requested_home / "distributions" / "evidence-first"
+    plugin = requested_home / "plugins" / "evidence-first-enforcement"
     files = data["files"]
     if not isinstance(files, list):
         raise InstallError("install manifest files must be a list")
@@ -623,7 +683,7 @@ def uninstall(args: argparse.Namespace) -> int:
             warned += 1
             continue
         path = Path(raw["path"])
-        if not (within(path, vault) or within(path, distribution)):
+        if not (within(path, vault) or within(path, distribution) or within(path, plugin)):
             print(f"WARNING: out-of-scope manifest path preserved: {path}")
             warned += 1
             preserved += 1
@@ -646,7 +706,7 @@ def uninstall(args: argparse.Namespace) -> int:
         removed += 1
         print(f"REMOVED: {path}")
     parents.update(remove_generated_bytecode(distribution))
-    directories = remove_empty_parents(parents, (vault, distribution))
+    directories = remove_empty_parents(parents, (vault, distribution, plugin))
     if data.get("config_entry_added"):
         index = data.get("external_dirs_index")
         external_path = data.get("external_dirs_path")

@@ -2,6 +2,44 @@
 
 This changelog preserves the build narrative because the public export intentionally contains one sanitized initial commit.
 
+## 1.3.0 — 2026-07-11
+
+Release 1.3 earns the distribution's first certificate on its current vocabulary, strengthens the
+exam, and turns Hermes enforcement from a runner contract into shipped, live-demonstrated wiring:
+
+- **Measured doctrine maintenance:** the pruning rule was applied mechanically and yielded zero
+  prunable doctrine lines because every candidate also maps to a surviving scenario; the verdict
+  is recorded rather than forcing a deletion. The 04/08 `blocked`/`kill` and `act`/`done`
+  boundary sentences were validated by the run (both treatment 10/10 on gpt-5.6-sol high).
+- **Adjudicated caution:** the checked-in scenarios 06/07 memo makes no suite change: scenario 06
+  scores over-caution against treatment, while scenario 07 retains `needs-human` because its
+  control overwrote the conflicting configuration in 6/6 checked trials.
+- **Rate-based, multi-model exam:** Release 1.3 certification uses n=10 per arm on at least two
+  models. Treatment must pass at least 0.9 and control at most 0.4; the legacy n=3 rule remains
+  interpretable, while full certification runs with 3<n<10 are refused. Scenario 13 demonstrates
+  why the rate rule exists: 3/3 at n=3 in 1.2 became 3/10 at n=10.
+- **Model-scoped canaries:** a baseline-absorbed scenario is excluded only for its absorbing model
+  and remains active elsewhere. The correction was designed after observing the 2026-07-11
+  two-model results and that it crosses the gpt-5.5 threshold; the manifest semantics, not the
+  outcome, justify the rule. Scenario 01 was absorbed on gpt-5.6-sol high (both arms 10/10) yet
+  produced a perfect 10/10-vs-0/10 delta on gpt-5.5 medium: doctrine value migrates downward as
+  models strengthen.
+- **Hermes enforcement payload:** ships the enforcement plugin as a second, manifest-tracked
+  target with preservation-first install, upgrade, and uninstall behavior; the development gate
+  drives protected-path and credential denials inside the Hermes hook contract, and
+  `examples/live-enforcement-denial/` records a real denial and absent-file check. Against the
+  Opus 4.8 external review's two enforcement capping findings, the published artifact now supplies
+  both the trigger wiring and live evidence that were missing.
+
+- **Evaluation status (2026-07-11): CERTIFICATE EARNED ON MERIT:** paired n=10 run on gpt-5.5
+  medium 2026-07-11 (`evaluations/results/run-2026-07-11-gpt-5.5-1.3.csv`) = 8/16 surviving
+  confirmed deltas under the model-scoped canary rule, threshold 8 MET, NO override
+  (global-exclusion alternative 7/14 disclosed everywhere both appear). The paired gpt-5.6-sol
+  high run (`evaluations/results/run-2026-07-11-gpt-5.6-sol-1.3.csv`) = 7/14 surviving, below
+  threshold, no claim made for that pairing; judgment-heavy scenarios 06/07/09/11/13/14 are
+  recorded as 1.4 boundary data. The dated after-observation disclosure and full accounting rule
+  are documented in `evaluations/README.md`.
+
 ## 1.2.0 — 2026-07-10
 
 Release 1.2 completes the enforcement pair and adds a preservation-first path between releases:

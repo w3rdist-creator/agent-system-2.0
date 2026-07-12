@@ -46,6 +46,23 @@ review found missing. Other plugin and MCP integrations remain trigger-gated in 
 | Non-Hermes compatibility | Later | Maintainer plus user demand | Can platform-neutrality become a tested claim? |
 | Automated model grading | 1.1+ | Repeated evaluation operations and held-out data | Can it preserve provenance and human-judgment limits? |
 
+## Candidates recorded 2026-07-12 (operator production incidents, gated for 1.4)
+
+Eight patterns emerged from one operator production weekend (2026-07-11/12). Per admission policy,
+each is recorded with its evidence status and stays out of doctrine until its gate fires. Three
+carry multiple dated incidents already; five carry one incident or zero time-in-service.
+
+| Capability | Earliest release | Evidence status / activation trigger | Blocking question |
+|---|---:|---|---|
+| Prose-contract registry + executable checkers ("a promise without a check is a future incident") | 1.4 | THREE dated incidents 2026-07-10..12: a brief's prompt rewrite silently evicted an integration for 3 days; a scheduler reported ok while the delivery plane dropped the message; a spec sentence ("missing line = alarm") was unenforceable until scripted. First live checker run caught its own motivating incident. | Can evaluation scenarios test checker-firing without shipping a scheduler? |
+| False-green verification taxonomy (job-ran ≠ delivered; kill-rc-0 ≠ dead, verify new PID; hand-run ≠ timer-run; self-test-passed ≠ real-formats-handled) | 1.4 | Each rule carries a distinct dated operator incident (2026-07-08..12), incl. one committed by the orchestrating agent itself. | Which rules become doctrine lines vs. scenario expected-results? |
+| Prompt-as-code versioning (extract scheduled-job prompts to git; diff + drift callouts on change) | 1.4 | One incident class (the eviction above); mechanism live in production since 2026-07-12 (93 prompts under version control). | Is one incident class plus production service enough, or wait for a second drift catch? |
+| Tiered auto-fixer (mechanical playbook w/ cooldown caps → diagnose-only escalation → failure ledger; every action confesses) | 1.4+ | Deployed 2026-07-12; ZERO live saves on record. Trigger: first real save, or a second motivating incident. | Can cooldown/never-disable boundaries be certified without a live scheduler in the exam? |
+| Scoped-allowlist agent dispatch (builder agents run under narrow file/tool allowlists with the deliverable's own dangerous commands denied during build — guardrails, never approvals-off) | 1.4 | Three clean production builds 2026-07-12; review caught one real-world-format bug and one dropped output-contract each time. Two-production-use path arguably satisfied. | How does an allowlist recipe stay runner-portable? |
+| Amortized token audit (per-run cost × scheduled frequency from agent logs; interactive-session replay measured as the dominant class) | 1.4+ | One audit run 2026-07-12 (found 65% of spend outside cron fleet); verification rerun scheduled 2026-07-19. Trigger: projection confirmed or honestly refuted by the rerun. | Does the method generalize beyond one gateway's log format? |
+| Operator-execution feedback + program kill-criterion (ledger records real fills vs printed levels; the automation carries its own invalidation and tracks "week N of M") | 1.4+ | Wired 2026-07-12, zero graded cycles. Trigger: first weekly replay grading real fills. | Can "unused system is a finding" be scored without operator-privacy leakage? |
+| Advisor red-team ritual (adversarial review by a second model family before load-bearing commits) | 1.4+ | Declared 2026-07-12 after an orchestrator false-positive; never yet exercised. Trigger: first exercised review with findings addressed on the record. | Does it earn scenarios, or remain a team-contract line? |
+
 ## Pack-level triggers
 
 The default inert-pack trigger is one external user request **or** two maintainer production uses that cannot be served cleanly by Research, Agent Ops, the base vault, or the routed library. Each pack adds narrower gates:

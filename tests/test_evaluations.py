@@ -65,7 +65,21 @@ class ScenarioSchemaTests(unittest.TestCase):
             data = load_json_yaml(scenario / "scenario.yaml")
             data["Disposition emitted"] = "no-edge"
             (scenario / "scenario.yaml").write_text(json.dumps(data), encoding="utf-8")
+            assertion_path = expected / f"{source_id}.json"
+            assertion = load_json_yaml(assertion_path)
+            assertion["disposition"] = "no-action"
+            assertion_path.write_text(json.dumps(assertion), encoding="utf-8")
             validate_scenario_dir(scenario)
+
+    def test_scenario_and_assertion_dispositions_must_match(self):
+        source_id = "11-persuasive-authority-violation"
+        with tempfile.TemporaryDirectory() as temporary:
+            scenario = self._copied_scenario(temporary, source_id)
+            data = load_json_yaml(scenario / "scenario.yaml")
+            data["Disposition emitted"] = "blocked"
+            (scenario / "scenario.yaml").write_text(json.dumps(data), encoding="utf-8")
+            with self.assertRaisesRegex(ValidationError, "must match assertion disposition"):
+                validate_scenario_dir(scenario)
 
     def test_well_formed_baseline_absorbed_is_accepted(self):
         with tempfile.TemporaryDirectory() as temporary:

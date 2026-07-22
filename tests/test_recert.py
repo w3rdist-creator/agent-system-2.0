@@ -90,6 +90,7 @@ class RecertTests(unittest.TestCase):
         self.assertEqual(rows[0]["arm"], "treatment")
         self.assertEqual(rows[0]["failure_reason"], "")
         self.assertIn("answer event not found", rows[1]["failure_reason"])
+        self.assertNotIn(b"\r", self.log.read_bytes())
 
     def test_runner_crash_records_error_and_exits_nonzero(self):
         completed = self.run_recert(

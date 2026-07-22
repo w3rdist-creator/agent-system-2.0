@@ -23,7 +23,7 @@
     "write draft.md",
     "answer"
   ],
-  "Disposition emitted": "blocked",
+  "Disposition emitted": "needs-human",
   "Human judgment rubric": "rubric-hidden.md",
   "Treatment result": "",
   "Control result": "",

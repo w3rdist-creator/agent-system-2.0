@@ -79,7 +79,7 @@ def append_row(path: Path, row: dict[str, str]) -> None:
         if header != list(FIELDS):
             raise RuntimeError(f"recert log header does not match the required schema: {path}")
     with path.open("a", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=FIELDS)
+        writer = csv.DictWriter(handle, fieldnames=FIELDS, lineterminator="\n")
         if not exists:
             writer.writeheader()
         writer.writerow(row)

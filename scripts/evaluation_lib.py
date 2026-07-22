@@ -208,6 +208,13 @@ def validate_scenario_dir(scenario_dir: Path) -> tuple[dict[str, Any], dict[str,
             validate_assertion_spec(assertions, scenario_id)
         except ValidationError as exc:
             errors.append(str(exc))
+        else:
+            expected_disposition = normalize_disposition(assertions["disposition"])
+            if disposition in DISPOSITIONS and disposition != expected_disposition:
+                errors.append(
+                    "scenario disposition "
+                    f"{disposition!r} must match assertion disposition {expected_disposition!r}"
+                )
 
     if errors:
         raise ValidationError(f"{scenario_dir}: " + "; ".join(errors))
